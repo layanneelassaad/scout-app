@@ -1,0 +1,13 @@
+{% block head %}
+<script type="module" src="/mr_kg/static/js/kg-admin.js"></script>
+{% endblock %}
+
+{% block content %}
+<details open>
+  <summary><span class="material-icons">hub</span>
+  <span>Knowledge Graph Management</span></summary>
+  <div class="details-content">
+    <kg-admin theme="dark" scope="local"></kg-admin>
+  </div>
+</details>
+{% endblock %}
