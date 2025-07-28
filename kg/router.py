@@ -5,13 +5,96 @@ from pydantic import BaseModel
 import os
 import json
 from typing import List, Dict, Any, Optional
-from lib.route_decorators import requires_role, public_route
+from .lib.route_decorators import requires_role, public_route
 from datetime import datetime
 import asyncio
 from pathlib import Path
-from lib.utils.debug import debug_box
+from .lib.utils.debug import debug_box
 
 router = APIRouter()
+from fastapi.responses import StreamingResponse
+import uuid
+import time
+import asyncio
+from typing import Union
+
+# Temporary in-memory session storage (for simplicity)
+sessions = {}
+
+# Generate a session (this replaces your /makesession/kg2)
+@router.get("/makesession/kg2")
+async def create_session(api_key: str):
+    log_id = str(uuid.uuid4())
+    sessions[log_id] = {
+        "log_id": log_id,
+        "created_at": time.time(),
+        "commands": []
+    }
+    return {"log_id": log_id}
+
+@router.get("/chat/{session_id}/events")
+async def stream_events(session_id: str, api_key: str):
+    if session_id not in sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    async def event_generator():
+        # Send thinking events
+        for i in range(3):
+            await asyncio.sleep(1)
+            yield f"event: partial_command\ndata: {{\"command\": \"searching\", \"args\": {{\"step\": \"{i+1}\"}} }}\n\n"
+        
+        # Send search results
+        search_results = sessions[session_id].get("search_results", [])
+        if search_results:
+            for result in search_results[:5]:  # Limit to 5 results
+                await asyncio.sleep(0.5)
+                yield f"event: command_result\ndata: {{\"result\": {{\"entity\": \"{result.get('entity', 'Unknown')}\", \"score\": {result.get('score', 0.0)}, \"type\": \"{result.get('type', 'Unknown')}\", \"description\": \"{result.get('description', '')}\"}} }}\n\n"
+        else:
+            # Fallback to demo result if no search results
+            await asyncio.sleep(0.5)
+            yield f"event: command_result\ndata: {{\"result\": {{\"entity\": \"/Users/demo/example.pdf\", \"score\": 0.8, \"type\": \"document\", \"description\": \"Demo document\"}} }}\n\n"
+        
+        await asyncio.sleep(1)
+        yield f"event: finished_chat\ndata: {{}}\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+class MessageInput(BaseModel):
+    type: str
+    text: str
+
+@router.post("/chat/{session_id}/send")
+async def send_query(session_id: str, messages: List[MessageInput], api_key: str):
+    if session_id not in sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    for message in messages:
+        sessions[session_id]["commands"].append(message.text)
+        print(f"[Session {session_id}] Message received: {message.text}")
+        
+        # Perform actual search using the kg_search function
+        try:
+            from .graph_commands import kg_search
+            search_result = await kg_search(
+                query=message.text,
+                limit=10,
+                semantic=False,
+                threshold=0.7
+            )
+            
+            if search_result.get('success'):
+                # Store the search results in the session
+                sessions[session_id]["search_results"] = search_result.get('results', [])
+                print(f"Search completed with {len(search_result.get('results', []))} results")
+                print(f"Search results: {search_result.get('results', [])}")
+            else:
+                print(f"Search failed: {search_result.get('error', 'Unknown error')}")
+                
+        except Exception as e:
+            print(f"Error performing search: {e}")
+
+    return {"status": "received", "message_count": len(messages)}
+
 
 # Import command functions instead of duplicating functionality
 from .file_commands import (
@@ -300,4 +383,4 @@ async def open_file_api(request: OpenFileRequest):
             'error': str(e)
         }, status_code=500)
 
-
+router.include_router(protected_router)

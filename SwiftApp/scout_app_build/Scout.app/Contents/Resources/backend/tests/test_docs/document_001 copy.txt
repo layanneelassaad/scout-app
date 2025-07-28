@@ -1,0 +1,29 @@
+CONTRACT AGREEMENT
+
+This agreement is between John Smith (hereinafter "Contractor") and Acme Corporation (hereinafter "Client").
+
+SERVICE DESCRIPTION:
+Web development services for Acme's e-commerce platform redesign.
+
+TERMS AND CONDITIONS:
+- Project Duration: 6 months
+- Total Value: $75,000
+- Payment Schedule: 50% upfront, 50% upon completion
+- Start Date: March 1, 2024
+- End Date: August 31, 2024
+
+DELIVERABLES:
+1. Responsive e-commerce website
+2. Admin dashboard
+3. Payment integration
+4. User authentication system
+5. Documentation and training
+
+SIGNED BY:
+John Smith
+Date: February 15, 2024
+
+SIGNED BY:
+Sarah Johnson, VP of Technology
+Acme Corporation
+Date: February 20, 2024 

@@ -1,0 +1,56 @@
+{
+  "source": "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/AgentStoreView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Scout Agent Store",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 41
+        }
+      },
+      {
+        "comment": "",
+        "key": "What do you want to see?",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "Installed Agents",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 24
+        }
+      },
+      {
+        "comment": "",
+        "key": "Store",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 25
+        }
+      },
+      {
+        "comment": "",
+        "key": "(%lld)",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 165
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search...",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 194
+        }
+      }
+    ]
+  },
+  "version": 1
+}

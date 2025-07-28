@@ -1,0 +1,64 @@
+{
+  "source": "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/FileSearchView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Scout File Search",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 96
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search for files, content, or topics...",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 18
+        }
+      },
+      {
+        "comment": "",
+        "key": "Command Status",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 50
+        }
+      },
+      {
+        "comment": "",
+        "key": "Open",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reveal in Finder",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 91
+        }
+      },
+      {
+        "comment": "",
+        "key": "Type: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 116
+        }
+      },
+      {
+        "comment": "",
+        "key": "Description: %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 119
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,7 @@
+# OpenAI API Configuration
+# Rename this file to .env and add your actual API key
+OPENAI_API_KEY=your-openai-api-key-here
+
+# Knowledge Graph Configuration
+KG_STORAGE_PATH=~/.mr_kg_data/knowledge_graph.json
+KG_CACHE_DIR=~/.mr_kg_data/cache 

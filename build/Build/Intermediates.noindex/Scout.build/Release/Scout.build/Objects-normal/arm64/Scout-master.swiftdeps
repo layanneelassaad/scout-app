@@ -1,0 +1,16 @@
+version: "Apple Swift version 6.1.2 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)"
+options: "1b5c1df2aab1e050d6bece7ec90f9a131c19913b6c6bcfdca98680d450156450"
+build_start_time: [1753707795, 500918000]
+build_end_time: [1753707801, 191177000]
+inputs:
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/APIService.swift": [1753706345, 746648893]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/Agent.swift": [1753700503, 169898291]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/AgentStoreView.swift": [1753700525, 600604878]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/ContentView.swift": [1753700552, 847813778]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/FileSearchView.swift": [1753705290, 833935695]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/FileSearchViewModel.swift": [1753705262, 797187250]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/MockData.swift": [1753700650, 784998366]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/ScoutApp.swift": [1753707673, 321034754]
+  "/Users/layanneelassaad/Desktop/scout-app/SwiftApp/Scout/Scout/Toolset.swift": [1753700734, 147425569]
+  ? "/Users/layanneelassaad/Desktop/scout-app/build/Build/Intermediates.noindex/Scout.build/Release/Scout.build/DerivedSources/GeneratedAssetSymbols.swift"
+  : [1753707795, 45719727]
