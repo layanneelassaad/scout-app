@@ -24,7 +24,7 @@ mkdir -p "$PACKAGE_DIR"
 # Build Swift app
 echo "Building Swift app..."
 cd "$SWIFT_PROJECT_DIR"
-xcodebuild -project filesearch.xcodeproj -scheme filesearch -configuration Release build
+# xcodebuild -project filesearch.xcodeproj -scheme filesearch -configuration Release build
 
 # Find and copy the built app - check both project dir and DerivedData
 echo "Looking for built Swift app..."

@@ -76,6 +76,11 @@ mkdir -p "$BACKEND_DIR"
 cp -r "$PYTHON_BACKEND_DIR"/* "$BACKEND_DIR/"
 echo "Copied entire kg backend directory"
 
+# Create a kg symlink so uvicorn can find the module
+cd "$APP_BUNDLE/Contents/Resources"
+ln -sf backend kg
+echo "Created kg symlink for uvicorn"
+
 # Copy .env file (important for backend configuration)
 if [ -f "$PYTHON_BACKEND_DIR/.env" ]; then
     cp "$PYTHON_BACKEND_DIR/.env" "$BACKEND_DIR/"
@@ -140,8 +145,9 @@ echo "Working directory: $(pwd)"
 echo "Data directory: $(pwd)/data"
 echo "Personas directory: $(pwd)/personas"
 
-# Start the backend server on port 8020
-uvicorn main:app --host 0.0.0.0 --port 8020
+# Start the backend server on port 8020 using the virtual environment's uvicorn
+cd "$BACKEND_DIR/.."
+"$PYTHON_ENV/bin/uvicorn" kg:app --host 0.0.0.0 --port 8020
 EOF
 
 chmod +x "$APP_BUNDLE/Contents/Resources/start_backend.sh"
