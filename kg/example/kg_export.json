@@ -1,0 +1,393 @@
+{
+  "nodes": [
+    {
+      "id": "File:agreement_042.txt",
+      "type": "File",
+      "properties": {
+        "description": "Consulting agreement document",
+        "file_name": "agreement_042.txt",
+        "file_stem": "agreement_042",
+        "file_extension": ".txt",
+        "file_size": 818,
+        "modified_date": "2025-07-07T04:10:43.682003",
+        "created_date": "2025-07-11T02:46:41.226265",
+        "full_path": "/Users/layanneelassaad/Desktop/scout-app/kg/tests/test_docs/agreement_042.txt",
+        "directory": "tests/test_docs",
+        "is_hidden": false,
+        "path": "/Users/layanneelassaad/Desktop/scout-app/kg/tests/test_docs/agreement_042.txt",
+        "file_type": ".txt"
+      }
+    },
+    {
+      "id": "tests/test_docs/agreement_042.txt::chunk_0",
+      "type": "TextChunk",
+      "properties": {
+        "description": "CONSULTING AGREEMENT\n\nThis consulting agreement is between John Smith (hereinafter \"Consultant\") and Microsoft Corporation (hereinafter \"Client\").\n\nSCOPE OF WORK: Software architecture consulting for Microsoft's cloud migration project.\n\nCONTRACT DETAILS: - Engagement Period: 3 months - Hourly Rate: $200/hour - Estimated Total: $96,000 - Maximum Hours: 480 hours - Start Date: January 15, 2024 - End Date: April 15, 2024\n\nSERVICES TO BE PROVIDED:\n\n1. Cloud architecture design\n\n2. Migration strategy planning\n\n3. Performance optimization\n\n4. Security review\n\n5. Team training sessions\n\nPAYMENT TERMS:\n\nMonthly invoicing\n\nNet 30 payment terms\n\nExpenses reimbursed with receipts\n\nSIGNED BY:\n\nJohn Smith\n\nDate: January 10, 2024\n\nSIGNED BY: Michael Chen, Director of Engineering Microsoft Corporation Date: January 12, 2024",
+        "source_file": "tests/test_docs/agreement_042.txt",
+        "chunk_index": 0,
+        "word_count": 114,
+        "file_name": "agreement_042.txt"
+      }
+    },
+    {
+      "id": "John Smith",
+      "type": "Person",
+      "properties": {
+        "description": "Lead Developer for AI-powered analytics platform",
+        "role": "Lead Developer",
+        "email": "john.smith@consulting.com"
+      }
+    },
+    {
+      "id": "Microsoft Corporation",
+      "type": "Organization",
+      "properties": {
+        "description": "Client for consulting services"
+      }
+    },
+    {
+      "id": "Cloud Migration Project",
+      "type": "Project",
+      "properties": {
+        "description": "Software architecture consulting project"
+      }
+    },
+    {
+      "id": "File:document_001 copy.txt",
+      "type": "File",
+      "properties": {
+        "description": "File: document_001 copy.txt located at tests/test_docs/document_001 copy.txt (Type: .txt)",
+        "file_name": "document_001 copy.txt",
+        "file_stem": "document_001 copy",
+        "file_extension": ".txt",
+        "file_size": 683,
+        "modified_date": "2025-07-07T04:10:43.682278",
+        "created_date": "2025-07-10T00:49:31.935007",
+        "full_path": "/Users/layanneelassaad/Desktop/scout-app/kg/tests/test_docs/document_001 copy.txt",
+        "directory": "tests/test_docs",
+        "is_hidden": false
+      }
+    },
+    {
+      "id": "tests/test_docs/document_001 copy.txt::chunk_0",
+      "type": "TextChunk",
+      "properties": {
+        "description": "CONTRACT AGREEMENT\n\nThis agreement is between John Smith (hereinafter \"Contractor\") and Acme Corporation (hereinafter \"Client\").\n\nSERVICE DESCRIPTION: Web development services for Acme's e-commerce platform redesign.\n\nTERMS AND CONDITIONS: - Project Duration: 6 months - Total Value: $75,000 - Payment Schedule: 50% upfront, 50% upon completion - Start Date: March 1, 2024 - End Date: August 31, 2024\n\nDELIVERABLES:\n\n1. Responsive e\n\ncommerce website\n\n2. Admin dashboard\n\n3. Payment integration\n\n4. User authentication system\n\n5. Documentation and training\n\nSIGNED BY:\n\nJohn Smith\n\nDate: February 15, 2024\n\nSIGNED BY: Sarah Johnson, VP of Technology Acme Corporation Date: February 20, 2024",
+        "source_file": "tests/test_docs/document_001 copy.txt",
+        "chunk_index": 0,
+        "word_count": 98,
+        "file_name": "document_001 copy.txt"
+      }
+    },
+    {
+      "id": "Acme Corporation",
+      "type": "Organization",
+      "properties": {
+        "description": "Client for web development services",
+        "industry": "Technology"
+      }
+    },
+    {
+      "id": "Contract Agreement",
+      "type": "Document",
+      "properties": {
+        "description": "Agreement for web development services",
+        "date_created": "February 15, 2024",
+        "status": "signed"
+      }
+    },
+    {
+      "id": "Project E-commerce Redesign",
+      "type": "Project",
+      "properties": {
+        "description": "Web development project for Acme Corporation",
+        "start_date": "March 1, 2024",
+        "end_date": "August 31, 2024",
+        "status": "ongoing"
+      }
+    },
+    {
+      "id": "Sarah Johnson",
+      "type": "Person",
+      "properties": {
+        "description": "VP of Technology at Acme Corporation",
+        "role": "VP of Technology"
+      }
+    },
+    {
+      "id": "File:project_plan_2024.txt",
+      "type": "File",
+      "properties": {
+        "description": "File: project_plan_2024.txt located at tests/test_docs/project_plan_2024.txt (Type: .txt)",
+        "file_name": "project_plan_2024.txt",
+        "file_stem": "project_plan_2024",
+        "file_extension": ".txt",
+        "file_size": 1318,
+        "modified_date": "2025-07-07T04:10:43.682727",
+        "created_date": "2025-07-10T00:49:37.484339",
+        "full_path": "/Users/layanneelassaad/Desktop/scout-app/kg/tests/test_docs/project_plan_2024.txt",
+        "directory": "tests/test_docs",
+        "is_hidden": false
+      }
+    },
+    {
+      "id": "tests/test_docs/project_plan_2024.txt::chunk_0",
+      "type": "TextChunk",
+      "properties": {
+        "description": "PROJECT PROPOSAL\n\nTo: Google Inc.\n\nFrom: John Smith\n\nSubject: AI\n\nPowered Analytics Platform Development\n\nDate: March 10, 2024\n\nEXECUTIVE SUMMARY: This proposal outlines the development of a comprehensive AI-powered analytics platform for Google's internal data analysis needs.\n\nPROJECT OVERVIEW: We propose to build a machine learning platform that can process and analyze Google's vast datasets to provide actionable insights for business decision-making.\n\nTECHNICAL APPROACH:\n\n1. Data Pipeline Architecture\n\nReal\n\ntime data ingestion\n\nAutomated data cleaning\n\nScalable processing framework\n\n2. Machine Learning Components\n\nPredictive analytics models\n\nNatural language processing\n\nComputer vision integration\n\n3. User Interface\n\nInteractive dashboards\n\nCustom reporting tools\n\nMobile\n\nresponsive design\n\nTIMELINE: - Phase 1 (Discovery): 2 weeks - Phase 2 (Design): 3 weeks - Phase 3 (Development): 8 weeks - Phase 4 (Testing): 2 weeks - Phase 5 (Deployment): 1 week\n\nTOTAL DURATION: 16 weeks\n\nBUDGET:\n\nDevelopment: $180,000\n\nInfrastructure: $45,000\n\nTraining: $25,000\n\nTOTAL: $250,000\n\nTEAM:\n\nJohn Smith (Lead Developer)\n\nAlice Rodriguez (ML Engineer)\n\nDavid Kim (Frontend Developer)\n\nMaria Santos (DevOps Engineer)\n\nCONTACT:\n\nJohn Smith\n\njohn.smith@consulting.com\n\n(555) 123\n\n4567",
+        "source_file": "tests/test_docs/project_plan_2024.txt",
+        "chunk_index": 0,
+        "word_count": 170,
+        "file_name": "project_plan_2024.txt"
+      }
+    },
+    {
+      "id": "Google Inc.",
+      "type": "Organization",
+      "properties": {
+        "description": "Technology company focused on internet-related services and products"
+      }
+    },
+    {
+      "id": "AI-powered Analytics Platform",
+      "type": "Project",
+      "properties": {
+        "description": "Development of a comprehensive analytics platform for data analysis"
+      }
+    },
+    {
+      "id": "Alice Rodriguez",
+      "type": "Person",
+      "properties": {
+        "description": "ML Engineer for AI-powered analytics platform"
+      }
+    },
+    {
+      "id": "David Kim",
+      "type": "Person",
+      "properties": {
+        "description": "Frontend Developer for AI-powered analytics platform"
+      }
+    },
+    {
+      "id": "Maria Santos",
+      "type": "Person",
+      "properties": {
+        "description": "DevOps Engineer for AI-powered analytics platform"
+      }
+    },
+    {
+      "id": "March 10, 2024",
+      "type": "Event",
+      "properties": {
+        "description": "Date of project proposal submission"
+      }
+    }
+  ],
+  "links": [
+    {
+      "source": "File:agreement_042.txt",
+      "target": "tests/test_docs/agreement_042.txt::chunk_0",
+      "type": "contains_chunk",
+      "properties": {}
+    },
+    {
+      "source": "File:agreement_042.txt",
+      "target": "John Smith",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:agreement_042.txt",
+      "target": "John Smith",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:agreement_042.txt",
+      "target": "Microsoft Corporation",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:agreement_042.txt",
+      "target": "Microsoft Corporation",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:agreement_042.txt",
+      "target": "Cloud Migration Project",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:agreement_042.txt",
+      "target": "File:agreement_042.txt",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "John Smith",
+      "target": "Microsoft Corporation",
+      "type": "consults_for",
+      "properties": {}
+    },
+    {
+      "source": "John Smith",
+      "target": "File:agreement_042.txt",
+      "type": "signed",
+      "properties": {}
+    },
+    {
+      "source": "John Smith",
+      "target": "Project E-commerce Redesign",
+      "type": "works_on",
+      "properties": {}
+    },
+    {
+      "source": "John Smith",
+      "target": "AI-powered Analytics Platform",
+      "type": "works_on",
+      "properties": {}
+    },
+    {
+      "source": "John Smith",
+      "target": "Alice Rodriguez",
+      "type": "collaborates_with",
+      "properties": {}
+    },
+    {
+      "source": "John Smith",
+      "target": "David Kim",
+      "type": "collaborates_with",
+      "properties": {}
+    },
+    {
+      "source": "John Smith",
+      "target": "Maria Santos",
+      "type": "collaborates_with",
+      "properties": {}
+    },
+    {
+      "source": "File:document_001 copy.txt",
+      "target": "tests/test_docs/document_001 copy.txt::chunk_0",
+      "type": "contains_chunk",
+      "properties": {}
+    },
+    {
+      "source": "File:document_001 copy.txt",
+      "target": "John Smith",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:document_001 copy.txt",
+      "target": "Acme Corporation",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:document_001 copy.txt",
+      "target": "Contract Agreement",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:document_001 copy.txt",
+      "target": "Project E-commerce Redesign",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:document_001 copy.txt",
+      "target": "Sarah Johnson",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "Acme Corporation",
+      "target": "Project E-commerce Redesign",
+      "type": "commissions",
+      "properties": {}
+    },
+    {
+      "source": "Contract Agreement",
+      "target": "John Smith",
+      "type": "involves",
+      "properties": {}
+    },
+    {
+      "source": "Contract Agreement",
+      "target": "Acme Corporation",
+      "type": "involves",
+      "properties": {}
+    },
+    {
+      "source": "Sarah Johnson",
+      "target": "Contract Agreement",
+      "type": "signs",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "tests/test_docs/project_plan_2024.txt::chunk_0",
+      "type": "contains_chunk",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "John Smith",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "John Smith",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "Google Inc.",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "AI-powered Analytics Platform",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "Alice Rodriguez",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "David Kim",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "Maria Santos",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "File:project_plan_2024.txt",
+      "target": "March 10, 2024",
+      "type": "mentions",
+      "properties": {}
+    },
+    {
+      "source": "AI-powered Analytics Platform",
+      "target": "Google Inc.",
+      "type": "proposed_to",
+      "properties": {}
+    }
+  ]
+}
