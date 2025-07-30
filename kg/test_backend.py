@@ -9,7 +9,7 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 try:
-    from main import app
+    from kg import app
     print("✅ Backend imports successfully")
     
     # Test that the app has routes

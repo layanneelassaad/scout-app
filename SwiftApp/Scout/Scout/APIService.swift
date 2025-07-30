@@ -373,4 +373,39 @@ final class APIService: NSObject, URLSessionDataDelegate {
             }
         }
     }
+    
+    // MARK: - Directory Indexing
+    
+    func indexDirectory(path: String) async throws -> IndexingResult {
+        print("🔍 [APIService] Indexing directory: \(path)")
+        
+        guard let url = URL(string: "\(baseURL)/api/kg/index-directory") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let requestBody = ["path": path]
+        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            print("❌ [APIService] Indexing failed with status: \(httpResponse.statusCode)")
+            throw URLError(.badServerResponse)
+        }
+        
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw URLError(.cannotParseResponse)
+        }
+        
+        print("✅ [APIService] Indexing response: \(json)")
+        return IndexingResult(from: json)
+    }
 }

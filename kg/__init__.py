@@ -14,9 +14,31 @@ from . import filter
 # Create the FastAPI app for uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 app = FastAPI()
 app.include_router(router)
+
+# Simple middleware to set dummy user for all requests
+class UserMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        print(f"🔧 [UserMiddleware] Setting user for request to: {request.url}")
+        print(f"🔧 [UserMiddleware] Request method: {request.method}")
+        # Create dummy user inline
+        class DummyUser:
+            def __init__(self):
+                self.roles = ["user", "admin"]
+                self.id = "dummy_user"
+                self.name = "Dummy User"
+        
+        request.state.user = DummyUser()
+        print(f"🔧 [UserMiddleware] User set: {request.state.user}")
+        response = await call_next(request)
+        print(f"🔧 [UserMiddleware] Response status: {response.status_code}")
+        return response
+
+# Add user middleware first (before CORS)
+app.add_middleware(UserMiddleware)
 
 # Add CORS middleware to allow Swift app to connect
 app.add_middleware(

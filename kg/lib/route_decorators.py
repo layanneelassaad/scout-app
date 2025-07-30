@@ -2,8 +2,6 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from typing import Set, List
 from functools import wraps
 
-app = FastAPI()
-
 # Preserve existing public routes functionality
 public_routes: Set[str] = set()
 public_static: Set[str] = set()
@@ -33,8 +31,12 @@ def requires_role(role: str):
     return requires_any_role(role)
 
 def requires_any_role(*roles: str):
-    def role_checker(request: Request):
+    async def role_checker(request: Request):
+        print(f"🔍 [role_checker] Checking user for request to: {request.url}")
+        print(f"🔍 [role_checker] request.state: {request.state}")
+        print(f"🔍 [role_checker] hasattr(request.state, 'user'): {hasattr(request.state, 'user')}")
         if not request.state.user:
+            print(f"❌ [role_checker] No user found!")
             raise HTTPException(status_code=401, detail="Not authenticated")
         
         user_roles = request.state.user.roles
@@ -47,7 +49,7 @@ def requires_any_role(*roles: str):
     return Depends(role_checker)
 
 def requires_all_roles(*roles: str):
-    def role_checker(request: Request):
+    async def role_checker(request: Request):
         if not request.state.user:
             raise HTTPException(status_code=401, detail="Not authenticated")
         

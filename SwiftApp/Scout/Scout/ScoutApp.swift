@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 @main
 struct ScoutApp: App {
     init() {
@@ -19,6 +20,15 @@ struct ScoutApp: App {
                 .onAppear {
                     print("✅ AgentStoreView loaded")
                 }
+        }
+        .commands {
+            CommandGroup(after: .appInfo) {
+                Divider()
+                Button("Index Directory...") {
+                    IndexDirectoryManager.shared.showIndexDirectoryDialog()
+                }
+                .keyboardShortcut("i", modifiers: [.command, .shift])
+            }
         }
         
         Window("File Search", id: "file-search") {
