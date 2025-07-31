@@ -12,12 +12,12 @@ class ChatViewModel: ObservableObject {
     private var sseClient: SSEClient?
 
     func connectToEventStream(sessionID: String) {
-        print("🔌 Connecting to event stream...")
+        print("Connecting to event stream...")
 
         sseClient = SSEClient()
         sseClient?.onEvent = { [weak self] event in
-            print("📥 Event: \(event.entity): \(event.description)")
-            self?.messages.append("📥 \(event.entity): \(event.description)")
+            print("Event: \(event.entity): \(event.description)")
+            self?.messages.append(" \(event.entity): \(event.description)")
         }
 
         sseClient?.connect(sessionID: sessionID)

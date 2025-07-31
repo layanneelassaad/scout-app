@@ -7,38 +7,75 @@
 
 import SwiftUI
 
+
 struct AgentStoreView: View {
+    @EnvironmentObject var storeVM: AgentStoreViewModel
     @Environment(\.openWindow) var openWindow
+
     @State private var selectedView = 0
     @State private var searchText = ""
 
-    let agents = allAgents
-    // Only show File Search as installed
-    let installedAgents = allAgents.filter { $0.name == "File Search" }
-
-    let toolsets = allToolsets
+    private let agents = allAgents
+    private let installedAgents = allAgents.filter { $0.name == "File Search" }
 
     var body: some View {
-            VStack {
-                Picker("What do you want to see?", selection: $selectedView) {
-                    Text("Installed Agents").tag(0)
-                    Text("Store").tag(1)
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding()
+        VStack {
+            Picker("View:", selection: $selectedView) {
+                Text("Installed").tag(0)
+                Text("Store").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
 
-                SearchBar(text: $searchText)
-                    .padding(.horizontal)
+            SearchBar(text: $searchText)
+                .padding(.horizontal)
 
-                ScrollView {
-                    if selectedView == 0 {
-                        InstalledAgentGridView(agents: installedAgents.filter { searchText.isEmpty ? true : $0.name.localizedCaseInsensitiveContains(searchText) }, openWindow: openWindow)
-                    } else {
-                        AgentGridView(agents: agents.filter { searchText.isEmpty ? true : $0.name.localizedCaseInsensitiveContains(searchText) })
-                    }
+            ScrollView {
+                if selectedView == 0 {
+                    InstalledAgentGridView(
+                        agents: installedAgents
+                            .filter {
+                                searchText.isEmpty ||
+                                $0.name.localizedCaseInsensitiveContains(searchText)
+                            },
+                        openWindow: openWindow
+                    )
+                } else {
+                    AgentGridView(
+                        agents: agents
+                            .filter {
+                                searchText.isEmpty ||
+                                $0.name.localizedCaseInsensitiveContains(searchText)
+                            }
+                    )
                 }
             }
-            .navigationTitle("Scout Agent Store")
+        }
+        .navigationTitle("Scout Agent Store")
+    
+        .sheet(isPresented: $storeVM.showingCheckout) {
+            if let url = storeVM.checkoutURL {
+                ZStack(alignment: .topTrailing) {
+                  
+                    CheckoutWebView(url: url)
+                        .frame(minWidth: 600, minHeight: 800)
+
+                 
+                    Button(action: {
+                        storeVM.showingCheckout = false
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 20, weight: .regular))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(12)
+                    .help("Close checkout")
+                }
+            } else {
+                Text("Unable to load checkout.")
+                    .padding()
+            }
+        }
     }
 }
 
@@ -59,12 +96,12 @@ struct InstalledAgentGridView: View {
 
 struct AgentGridView: View {
     let agents: [Agent]
-    private let columns = [GridItem(.adaptive(minimum: 150))]
+    private let columns = [ GridItem(.adaptive(minimum: 180), spacing: 40) ]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 20) {
+        LazyVGrid(columns: columns, spacing: 40) {
             ForEach(agents) { agent in
-                StoreItemView(name: agent.name, icon: agent.icon, price: agent.price, rating: agent.rating, reviewCount: agent.reviewCount)
+                StoreItemView(agent: agent)
             }
         }
         .padding()
@@ -114,78 +151,85 @@ struct InstalledAgentItemView: View {
     }
 }
 
-struct ToolsetGridView: View {
-    let toolsets: [Toolset]
-    private let columns = [GridItem(.adaptive(minimum: 150))]
 
-    var body: some View {
-        LazyVGrid(columns: columns, spacing: 20) {
-            ForEach(toolsets) { toolset in
-                StoreItemView(name: toolset.name, icon: toolset.icon, price: toolset.price)
-            }
-        }
-        .padding()
-    }
-}
 
 struct StoreItemView: View {
-    var name: String
-    var icon: String
-    var price: Double
-    var rating: Double? = nil
-    var reviewCount: Int? = nil
+  @EnvironmentObject var storeVM: AgentStoreViewModel
+  let agent: Agent
+  @State private var isHovered = false
 
-    @State private var isHovered = false
-
-    var body: some View {
-        VStack {
-            Image(systemName: icon)
-                .font(.system(size: 40, weight: .medium))
-                .padding()
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.blue, .purple, .pink],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+  var body: some View {
+    VStack(spacing: 8) {
+        Image(systemName: agent.icon)
+            .font(.system(size: 40, weight: .medium))
+            .padding()
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [.blue, .purple, .pink],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .background(
-                    LinearGradient(colors: [.blue.opacity(0.1), .purple.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+            )
+            .background(
+                LinearGradient(colors: [.blue.opacity(0.1), .purple.opacity(0.1)], startPoint: .topLeading, endPoint: .bottomTrailing)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+    
 
-            Text(name)
-                .font(.headline)
-                .lineLimit(1)
+    
+      Text(agent.name)
+        .font(.headline)
+        .lineLimit(1)
 
-            if let rating = rating, let reviewCount = reviewCount {
-                HStack {
-                    Image(systemName: "star.fill").foregroundColor(.yellow)
-                    Text(String(format: "%.1f", rating))
-                    Text("(\(reviewCount))").font(.caption).foregroundColor(.secondary)
-                }
-            }
+     
+      Text(agent.description)
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .lineLimit(2)
+        .multilineTextAlignment(.center)
 
-            Text(price == 0.0 ? "Free" : String(format: "$%.2f", price))
-                .font(.caption)
-                .fontWeight(.bold)
-                .padding(.vertical, 4)
-                .padding(.horizontal, 8)
-                .background(Color.blue.opacity(0.2))
-                .clipShape(Capsule())
+
+      if agent.rating > 0 {
+        HStack(spacing: 4) {
+          Image(systemName: "star.fill").foregroundColor(.yellow)
+          Text(String(format: "%.1f", agent.rating))
+          Text("(\(agent.reviewCount))")
+            .font(.caption)
+            .foregroundColor(.secondary)
         }
-        .padding()
-        .background(isHovered ? Color.blue.opacity(0.1) : Color(NSColor.windowBackgroundColor))
-        .clipShape(RoundedRectangle(cornerRadius: 15))
-        .shadow(radius: isHovered ? 8 : 3)
-        .scaleEffect(isHovered ? 1.05 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: isHovered)
-        .onHover { hovering in
-            isHovered = hovering
+      }
+
+
+      if storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
+        Text("Purchased")
+          .font(.caption).bold()
+          .padding(6)
+          .background(Color.gray.opacity(0.2))
+          .clipShape(Capsule())
+
+      } else {
+        Button(action: { storeVM.buy(agent: agent) }) {
+          Text(agent.price == 0
+               ? "Free"
+               : String(format: "Buy for $%.2f", agent.price))
+            .frame(maxWidth: .infinity)
         }
+        .buttonStyle(.borderedProminent)
+        .disabled(storeVM.isProcessing)
+      }
     }
+    .padding()
+    .background(isHovered
+        ? Color.blue.opacity(0.1)
+        : Color(NSColor.windowBackgroundColor))
+    .clipShape(RoundedRectangle(cornerRadius: 15))
+    .shadow(radius: isHovered ? 8 : 3)
+    .scaleEffect(isHovered ? 1.05 : 1.0)
+    .animation(.easeInOut(duration: 0.2), value: isHovered)
+    .onHover { isHovered = $0 }
+    .frame(minWidth: 180)
+  }
 }
-
 struct SearchBar: View {
     @Binding var text: String
 

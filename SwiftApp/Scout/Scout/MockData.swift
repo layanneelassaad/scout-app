@@ -10,44 +10,50 @@ let pythonToolset = Toolset(id: UUID(), name: "Data Analysis (Python)", descript
 let allToolsets = [githubToolset, mailToolset, calendarToolset, blenderToolset, pythonToolset]
 
 // MARK: - Mock Agents
-let modelerAgent = Agent(
-    id: UUID(),
-    name: "3D Modeler",
-    description: "An agent specialized in creating 3D models using Blender.",
-    icon: "person.fill.viewfinder",
-    price: 99.99,
-    rating: 4.8,
-    reviewCount: 120,
-    requiredToolsetIDs: [blenderToolset.id, githubToolset.id],
-    dependentAgentIDs: []
+
+let summarizerAgent = Agent(
+  id: UUID(),
+  apiID: "cross-app-summarizer",
+  name: "Cross-App Summarizer",
+  description: "Extracts and condenses info from emails, Slack, Teams, PDFs, and web pages with smart AI.",
+  icon: "doc.plaintext",
+  price: 7.99,
+  rating: 4.3,
+  reviewCount: 512,
+  requiredToolsetIDs: [],
+  dependentAgentIDs: []
 )
 
-let dataScientistAgent = Agent(
-    id: UUID(),
-    name: "Data Scientist",
-    description: "Your personal data scientist for analyzing and visualizing data.",
-    icon: "brain.head.profile",
-    price: 149.99,
-    rating: 4.9,
-    reviewCount: 250,
-    requiredToolsetIDs: [pythonToolset.id, githubToolset.id],
-    dependentAgentIDs: []
+let emailTriageAgent = Agent(
+  id: UUID(),
+  apiID: "email-triage-draft",
+  name: "Email Triage & Draft",
+  description: "Sorts, filters, drafts replies, and schedules follow-ups on your inbox.",
+  icon: "envelope.open",
+  price: 7.99,
+  rating: 4.2,
+  reviewCount: 478,
+  requiredToolsetIDs: [],
+  dependentAgentIDs: []
 )
 
-let executiveAssistantAgent = Agent(
-    id: UUID(),
-    name: "Executive Assistant",
-    description: "Manages your email, calendar, and schedules meetings.",
-    icon: "person.crop.circle.badge.checkmark",
-    price: 0.0,
-    rating: 4.5,
-    reviewCount: 540,
-    requiredToolsetIDs: [mailToolset.id, calendarToolset.id],
-    dependentAgentIDs: []
+let meetingNoteAgent = Agent(
+  id: UUID(),
+  apiID: "meeting-note-taker",
+  name: "Meeting Note-Taker",
+  description: "Transcribes meetings, highlights actions, and links tasks to your projects.",
+  icon: "mic.fill",
+  price: 6.99,
+  rating: 4.4,
+  reviewCount: 390,
+  requiredToolsetIDs: [],
+  dependentAgentIDs: []
 )
+
 
 let fileSearchAgent = Agent(
     id: UUID(),
+    apiID:"meeting-note-taker",
     name: "File Search",
     description: "Search and analyze files on your system with advanced filtering.",
     icon: "magnifyingglass.circle.fill",
@@ -58,4 +64,6 @@ let fileSearchAgent = Agent(
     dependentAgentIDs: []
 )
 
-let allAgents = [fileSearchAgent, modelerAgent, dataScientistAgent, executiveAssistantAgent]
+let allAgents = [fileSearchAgent,
+                 summarizerAgent,
+                 emailTriageAgent, meetingNoteAgent]

@@ -24,6 +24,12 @@ echo "Cleaning previous build..."
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 
+# Install Node/Stripe dependencies
+echo "Installing backend (Stripe) dependencies..."
+pushd "$SCRIPT_DIR/../backend" >/dev/null
+  npm ci
+popd >/dev/null
+
 # Build Swift app
 echo "Building Swift application..."
 cd "$SWIFT_PROJECT_DIR/Scout"
@@ -71,6 +77,8 @@ pip install -r "$PYTHON_BACKEND_DIR/requirements.txt"
 echo "Copying backend source..."
 BACKEND_DIR="$APP_BUNDLE/Contents/Resources/backend"
 mkdir -p "$BACKEND_DIR"
+
+
 
 # Copy the entire kg directory structure
 cp -r "$PYTHON_BACKEND_DIR"/* "$BACKEND_DIR/"

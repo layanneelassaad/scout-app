@@ -11,7 +11,7 @@ struct Toolset: Identifiable, Codable {
     let id: UUID
     var name: String
     var description: String
-    var icon: String // SF Symbol name or asset name
+    var icon: String 
     var price: Double
 
     var isFree: Bool {

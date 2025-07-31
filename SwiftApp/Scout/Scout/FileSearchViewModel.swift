@@ -80,9 +80,9 @@ final class FileSearchViewModel: ObservableObject {
         apiService.newFile
             .receive(on: DispatchQueue.main)
             .sink { [weak self] file in
-                print("📁 [FileSearchViewModel] Received new file: \(file)")
+              
                 self?.files.append(file)
-                print("📁 [FileSearchViewModel] Files count: \(self?.files.count ?? 0)")
+               
             }
             .store(in: &cancellables)
 

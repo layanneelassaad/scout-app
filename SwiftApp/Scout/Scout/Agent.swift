@@ -9,9 +9,10 @@ import Foundation
 
 struct Agent: Identifiable, Codable {
     let id: UUID
+    let apiID: String
     var name: String
     var description: String
-    var icon: String // SF Symbol name or asset name
+    var icon: String 
     var price: Double
     var rating: Double
     var reviewCount: Int

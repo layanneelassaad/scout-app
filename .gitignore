@@ -65,6 +65,11 @@ build/
 *.app/
 *.dmg
 
+# Node.js (backend)
+backend/node_modules/
+backend/package-lock.json
+backend/.env    
+
 # Generated files
 *.log
 scout_log.txt

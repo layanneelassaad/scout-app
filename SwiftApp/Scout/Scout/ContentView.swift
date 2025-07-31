@@ -5,7 +5,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("🧠 Scout Knowledge Graph Search")
+            Text("Scout Knowledge Graph Search")
                 .font(.title2)
                 .padding(.top)
 
@@ -35,7 +35,7 @@ struct ContentView: View {
             Divider()
 
             Button("Start Listening") {
-                print("🚀 Button clicked")
+             
                 viewModel.connectToEventStream(sessionID: "a58badca-997c-49a6-a9ba-81c62c316c2d")
             }
             .padding()
