@@ -42,6 +42,23 @@ The build script performs the following steps:
 - **Fixed Build Script**: `./build_scout_fixed.sh` (preserves app signing) **TODO ADDRESS
 - **DMG Creation**: `./create_dmg_scout.sh` (creates distribution package)
 
+### Test Stripe Payment
+
+1. Copy your real keys into backend/.env (from .env.example).
+2. Run stripe backend
+```bash
+stripe listen \
+  --forward-to localhost:4242/webhook \
+  --events checkout.session.completed
+```
+
+
+3. Run app backend
+```bash
+   cd backend
+   npm start
+```
+
 ## Testing the Application
 
 ### Run the Built App
