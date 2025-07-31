@@ -47,6 +47,7 @@ The build script performs the following steps:
 1. Copy your real keys into backend/.env (from .env.example).
 2. Run stripe backend
 ```bash
+cd backend
 stripe listen \
   --forward-to localhost:4242/webhook \
   --events checkout.session.completed
