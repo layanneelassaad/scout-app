@@ -27,7 +27,7 @@ mkdir -p "$BUILD_DIR"
 # Install Node/Stripe dependencies
 echo "Installing backend (Stripe) dependencies..."
 pushd "$SCRIPT_DIR/../backend" >/dev/null
-  npm ci
+  npm install --production
 popd >/dev/null
 
 # Build Swift app
