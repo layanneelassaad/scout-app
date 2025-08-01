@@ -232,6 +232,7 @@ final class APIService: NSObject, URLSessionDataDelegate {
     func disconnect() {
         sseTask?.cancel()
         isConnected.send(false)
+        connectionStatus.send("Disconnected")
     }
 
     // MARK: - URLSessionDataDelegate (for SSE)
@@ -336,6 +337,9 @@ final class APIService: NSObject, URLSessionDataDelegate {
                         
                      
                         self.newFile.send(fileInfo)
+                        
+                        // Update current command to show that results are being found
+                        self.currentCommand.send("Found: \(entity)")
                     }
                 }
                 
@@ -358,12 +362,15 @@ final class APIService: NSObject, URLSessionDataDelegate {
             // If the error is a cancellation, it's an expected part of the disconnect flow.
             // We don't need to show a user-facing message.
             if let urlError = error as? URLError, urlError.code == .cancelled {
+                self.connectionStatus.send("Disconnected")
                 return
             }
 
             // For other actual errors, report them.
             if let error = error {
                 self.connectionStatus.send("SSE Error: \(error.localizedDescription)")
+            } else {
+                self.connectionStatus.send("Disconnected")
             }
         }
     }

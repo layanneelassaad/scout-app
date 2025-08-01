@@ -61,6 +61,10 @@ final class FileSearchViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .assign(to: &$isConnected)
 
+        apiService.isSearching
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$isSearching)
+
         apiService.connectionStatus
             .receive(on: DispatchQueue.main)
             .sink { [weak self] status in

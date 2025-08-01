@@ -27,25 +27,25 @@ struct FileSearchView: View {
                     
                     Spacer()
                     
-                    // Connection Status
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(viewModel.isConnected ? Color.green : Color.red)
-                            .frame(width: 8, height: 8)
-                        Text(viewModel.connectionStatus)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(NSColor.controlBackgroundColor))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                            )
-                    )
+                    // // Connection Status
+                    // HStack(spacing: 8) {
+                    //     Circle()
+                    //         .fill(viewModel.isConnected ? Color.green : Color.red)
+                    //         .frame(width: 8, height: 8)
+                    //     Text(viewModel.connectionStatus)
+                    //         .font(.system(size: 12, weight: .medium))
+                    //         .foregroundColor(.secondary)
+                    // }
+                    // .padding(.horizontal, 12)
+                    // .padding(.vertical, 6)
+                    // .background(
+                    //     RoundedRectangle(cornerRadius: 8)
+                    //         .fill(Color(NSColor.controlBackgroundColor))
+                    //         .overlay(
+                    //             RoundedRectangle(cornerRadius: 8)
+                    //                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    //         )
+                    // )
                 }
                 
                 // Search Bar
