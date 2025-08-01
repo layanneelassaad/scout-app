@@ -202,11 +202,30 @@ struct SideTabButton: View {
     let isSelected: Bool
     let action: () -> Void
     
+    private var selectedIconColor: Color {
+        if !isSelected { return .secondary }
+        
+        switch title.lowercased() {
+        case "made by scout":
+            return .green
+        case "productivity":
+            return .yellow
+        case "development":
+            return .brown
+        case "utilities":
+            return .brown
+        case "discover":
+            return .yellow
+        default:
+            return .blue
+        }
+    }
+    
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundColor(isSelected ? .blue : .secondary)
+                .foregroundColor(selectedIconColor)
                 .frame(width: 20)
             
             Text(title)
