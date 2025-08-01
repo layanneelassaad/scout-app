@@ -60,10 +60,10 @@ struct AgentStoreView: View {
                     ModernSearchBar(text: $searchText)
                 }
                 .padding(.horizontal, 20)
-                .padding(.vertical, 20)
+                .padding(.vertical, 19)
                 
                 Divider()
-                    .background(Color.gray.opacity(0.3))
+                    .background(Color.black.opacity(0.3))
                 
                 // Side tabs
                 VStack(spacing: 0) {
