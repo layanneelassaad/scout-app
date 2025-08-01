@@ -61,6 +61,7 @@ struct AgentStoreView: View {
     @State private var searchText = ""
     @State private var showingAgentInfo: Agent? = nil
     @State private var showingSettings: Agent? = nil
+    @State private var showingStorePage: Agent? = nil
 
     private let categories = Category.allCategories
     
@@ -156,11 +157,13 @@ struct AgentStoreView: View {
                         }
                     } else {
                         AgentGridView(
-                            agents: agentsForSection(selectedView)
-                                .filter {
-                                    searchText.isEmpty ||
-                                    $0.name.localizedCaseInsensitiveContains(searchText)
-                                }
+                            agents: agentsForSection(selectedView).filter {
+                                searchText.isEmpty ||
+                                $0.name.localizedCaseInsensitiveContains(searchText)
+                            },
+                            onTap: { agent in
+                                showingStorePage = agent
+                            }
                         )
                     }
                 }
@@ -197,6 +200,9 @@ struct AgentStoreView: View {
         }
         .sheet(item: $showingSettings) { agent in
             SettingsPage(agent: agent)
+        }
+        .sheet(item: $showingStorePage) { agent in
+            StorePage(agent: agent)
         }
     }
 }
@@ -275,12 +281,15 @@ struct InstalledAgentGridView: View {
 
 struct AgentGridView: View {
     let agents: [Agent]
+    let onTap: (Agent) -> Void
     private let columns = [GridItem(.flexible())]
 
     var body: some View {
         LazyVStack(spacing: 0) {
             ForEach(agents) { agent in
-                StoreItemView(agent: agent)
+                StoreItemView(agent: agent, onTap: {
+                    onTap(agent)
+                })
                 Divider()
                     .background(Color.gray.opacity(0.3))
             }
@@ -438,6 +447,7 @@ struct InstalledAgentItemView: View {
 struct StoreItemView: View {
     @EnvironmentObject var storeVM: AgentStoreViewModel
     let agent: Agent
+    let onTap: () -> Void
     @State private var isHovered = false
     @State private var showingPermissionsWarning = false
 
@@ -550,6 +560,9 @@ struct StoreItemView: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(isHovered ? Color(NSColor.controlBackgroundColor).opacity(0.8) : Color.clear)
         )
+        .onTapGesture {
+            onTap()
+        }
         .onHover { isHovered = $0 }
         .sheet(isPresented: $showingPermissionsWarning) {
             PermissionsWarningView(agent: agent)
@@ -644,7 +657,7 @@ struct ModernSearchBar: View {
                     .foregroundColor(.secondary)
                     .font(.system(size: 16, weight: .medium))
                 
-                TextField("Search agents...", text: $text)
+                TextField("Search...", text: $text)
                     .textFieldStyle(.plain)
                     .font(.system(size: 16, weight: .regular))
                 

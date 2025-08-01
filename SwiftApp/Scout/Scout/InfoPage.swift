@@ -17,7 +17,7 @@ struct InfoPageContent {
     static let searchAgent = InfoPageContent(
         title: "Search Agent",
         subtitle: "Find anything on your computer in seconds",
-        description: "Have you ever spent ages digging for an old file you emailed years ago? How about a document you downloaded during a meeting a while back?",
+        description: "Have you ever spent ages digging for an old file you emailed years ago? How about a document you downloaded during a meeting a while back? Using pure language queries like “2nd to last file I sent John about college recommendations” or “contract I downloaded during a meeting with acme corp”, Search Agent will surface any file you want. \n\nWhat's more, search agent can also find information for you from any of your files, emals, or other integrations. You can ask a question like “what did I write about in my meeting with acme corp last year” and search agent will instantly surface that information",
         features: [
             "Natural language queries",
             "Find files by content and context",
@@ -57,9 +57,25 @@ struct InfoPage: View {
                 
                 Spacer()
                 
-                // Placeholder for balance
-                Color.clear
-                    .frame(width: 16, height: 16)
+                // Store Button
+                Button(action: {
+                    // TODO: Navigate to store page
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "cart.fill")
+                            .font(.system(size: 14, weight: .medium))
+                        Text("Store")
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .foregroundColor(.blue)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.blue.opacity(0.1))
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)

@@ -49,11 +49,17 @@ class AgentStoreViewModel: ObservableObject {
     }
     
     func installAgent(_ agent: Agent) {
+        // Prevent re-installation if already purchased or downloading
+        guard !purchasedAgentIDs.contains(agent.id.uuidString) && 
+              !downloadingAgents.contains(agent.id.uuidString) else { return }
+        
         downloadingAgents.insert(agent.id.uuidString)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + Double.random(in: 2.0...4.0)) {
-            self.downloadingAgents.remove(agent.id.uuidString)
-            self.purchasedAgentIDs.insert(agent.id.uuidString)
+            DispatchQueue.main.async {
+                self.downloadingAgents.remove(agent.id.uuidString)
+                self.purchasedAgentIDs.insert(agent.id.uuidString)
+            }
         }
     }
 
