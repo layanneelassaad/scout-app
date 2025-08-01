@@ -61,8 +61,8 @@ struct AgentStoreView: View {
     @State private var searchText = ""
 
     private let sections = [
-        ("Installed Scouts", "checkmark.circle.fill"),
-        ("Made by Scout", "sparkles"),
+        ("Installed Scouts", "square.and.arrow.down.fill"),
+        ("Made by Scout", "checkmark.seal.fill"),
         ("Discover", "sparkles"),
         ("Productivity", "bolt.fill"),
         ("Development", "hammer.fill"),
