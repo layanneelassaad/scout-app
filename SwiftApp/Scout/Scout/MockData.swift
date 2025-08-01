@@ -24,7 +24,7 @@ let summarizerAgent = Agent(
   reviewCount: 2,
   requiredToolsetIDs: [],
   dependentAgentIDs: [],
-  categories: ["made by scout"],
+  categories: [Category.madeByScout],
   requiredPermissions: ["Accessibility"],
   recommendedPermissions: ["Full Disk Access"]
 )
@@ -40,7 +40,7 @@ let emailTriageAgent = Agent(
   reviewCount: 1,
   requiredToolsetIDs: [],
   dependentAgentIDs: [],
-  categories: ["made by scout"],
+  categories: [Category.madeByScout],
   requiredPermissions: ["Mail Access"],
   recommendedPermissions: ["Contacts", "Calendar Access", "Reminders"]
 )
@@ -56,7 +56,7 @@ let meetingNoteAgent = Agent(
   reviewCount: 2,
   requiredToolsetIDs: [],
   dependentAgentIDs: [],
-  categories: ["made by scout"],
+  categories: [Category.madeByScout],
   requiredPermissions: ["Microphone"],
   recommendedPermissions: ["Screen Recording", "Full Disk Access", "Calendar Access"]
 )
@@ -73,7 +73,7 @@ let fileSearchAgent = Agent(
     reviewCount: 2,
     requiredToolsetIDs: [],
     dependentAgentIDs: [],
-    categories: ["made by scout"],
+    categories: [Category.madeByScout],
     requiredPermissions: [""],
     recommendedPermissions: ["Full Disk Access"]
 )

@@ -60,19 +60,12 @@ struct AgentStoreView: View {
     @State private var selectedView = 0
     @State private var searchText = ""
 
-    private let sections = [
-        ("Installed Scouts", "square.and.arrow.down.fill"),
-        ("Made by Scout", "checkmark.seal.fill"),
-        ("Discover", "sparkles"),
-        ("Productivity", "bolt.fill"),
-        ("Development", "hammer.fill"),
-        ("Utilities", "wrench.and.screwdriver.fill")
-    ]
+    private let categories = Category.allCategories
     
     private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
-        let sectionName = sections[sectionIndex].0.lowercased()
+        let category = categories[sectionIndex]
         
-        if sectionName == "installed scouts" {
+        if category.id == "installed" {
             // Show all agents that are purchased/downloading
             return allAgents.filter { agent in
                 storeVM.purchasedAgentIDs.contains(agent.id.uuidString) || 
@@ -81,9 +74,7 @@ struct AgentStoreView: View {
         } else {
             // Show agents by category
             return allAgents.filter { agent in
-                agent.categories.contains(sectionName)
-                // !storeVM.purchasedAgentIDs.contains(agent.id.uuidString) &&
-                // !storeVM.downloadingAgents.contains(agent.id.uuidString)
+                agent.categories.contains { $0.id == category.id }
             }
         }
     }
@@ -110,10 +101,10 @@ struct AgentStoreView: View {
                 
                 // Side tabs
                 VStack(spacing: 0) {
-                    ForEach(Array(sections.enumerated()), id: \.offset) { index, section in
+                    ForEach(Array(categories.enumerated()), id: \.offset) { index, category in
                         SideTabButton(
-                            title: section.0,
-                            icon: section.1,
+                            title: category.name,
+                            icon: category.icon,
                             isSelected: selectedView == index
                         ) {
                             selectedView = index
@@ -133,7 +124,7 @@ struct AgentStoreView: View {
             VStack(spacing: 0) {
                 // Content header
                 HStack {
-                    Text(sections[selectedView].0)
+                    Text(categories[selectedView].name)
                         .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.primary)
                     Spacer()
@@ -205,20 +196,12 @@ struct SideTabButton: View {
     private var selectedIconColor: Color {
         if !isSelected { return .secondary }
         
-        switch title.lowercased() {
-        case "made by scout":
-            return .green
-        case "productivity":
-            return .yellow
-        case "development":
-            return .brown
-        case "utilities":
-            return .brown
-        case "discover":
-            return .yellow
-        default:
-            return .blue
+        // Find the category and use its selectedColor
+        if let category = Category.allCategories.first(where: { $0.name == title }) {
+            return category.selectedColor
         }
+        
+        return .blue // fallback
     }
     
     var body: some View {

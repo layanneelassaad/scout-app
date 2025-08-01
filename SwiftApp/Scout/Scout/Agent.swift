@@ -18,7 +18,7 @@ struct Agent: Identifiable, Codable {
     var reviewCount: Int
     var requiredToolsetIDs: [UUID]
     var dependentAgentIDs: [UUID]
-    var categories: [String]
+    var categories: [Category]
     var requiredPermissions: [String]
     var recommendedPermissions: [String]
 
