@@ -72,8 +72,19 @@ struct AgentStoreView: View {
     private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
         let sectionName = sections[sectionIndex].0.lowercased()
         
-        return allAgents.filter { agent in
-            agent.categories.contains(sectionName)
+        if sectionName == "installed scouts" {
+            // Show all agents that are purchased/downloading
+            return allAgents.filter { agent in
+                storeVM.purchasedAgentIDs.contains(agent.id.uuidString) || 
+                storeVM.downloadingAgents.contains(agent.id.uuidString)
+            }
+        } else {
+            // Show agents by category
+            return allAgents.filter { agent in
+                agent.categories.contains(sectionName)
+                // !storeVM.purchasedAgentIDs.contains(agent.id.uuidString) &&
+                // !storeVM.downloadingAgents.contains(agent.id.uuidString)
+            }
         }
     }
 
