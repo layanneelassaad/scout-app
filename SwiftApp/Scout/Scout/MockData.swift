@@ -11,8 +11,6 @@ let allToolsets = [githubToolset, mailToolset, calendarToolset, blenderToolset, 
 
 // MARK: - Mock Agents
 
-let fileSearchAgentID = UUID(uuidString: "550e8400-e29b-41d4-a716-446655440000")!
-
 let summarizerAgent = Agent(
   id: UUID(),
   apiID: "cross-app-summarizer",
@@ -26,7 +24,9 @@ let summarizerAgent = Agent(
   dependentAgentIDs: [],
   categories: [Category.madeByScout],
   requiredPermissions: ["Accessibility"],
-  recommendedPermissions: ["Full Disk Access"]
+  recommendedPermissions: ["Full Disk Access"],
+  infoPage: nil,
+  permissionsPage: nil
 )
 
 let emailTriageAgent = Agent(
@@ -42,7 +42,9 @@ let emailTriageAgent = Agent(
   dependentAgentIDs: [],
   categories: [Category.madeByScout],
   requiredPermissions: ["Mail Access"],
-  recommendedPermissions: ["Contacts", "Calendar Access", "Reminders"]
+  recommendedPermissions: ["Contacts", "Calendar Access", "Reminders"],
+  infoPage: nil,
+  permissionsPage: nil
 )
 
 let meetingNoteAgent = Agent(
@@ -58,15 +60,17 @@ let meetingNoteAgent = Agent(
   dependentAgentIDs: [],
   categories: [Category.madeByScout],
   requiredPermissions: ["Microphone"],
-  recommendedPermissions: ["Screen Recording", "Full Disk Access", "Calendar Access"]
+  recommendedPermissions: ["Screen Recording", "Full Disk Access", "Calendar Access"],
+  infoPage: nil,
+  permissionsPage: nil
 )
 
 
 let fileSearchAgent = Agent(
-    id: fileSearchAgentID,
+    id: UUID(),
     apiID:"file-search",
-    name: "File Scout",
-    description: "Surface any information xyz.",
+    name: "Search Agent",
+    description: "Find anything on your computer in seconds using natural language.",
     icon: "magnifyingglass.circle.fill",
     price: 0.0,
     rating: 5,
@@ -75,7 +79,9 @@ let fileSearchAgent = Agent(
     dependentAgentIDs: [],
     categories: [Category.madeByScout],
     requiredPermissions: [""],
-    recommendedPermissions: ["Full Disk Access"]
+    recommendedPermissions: ["Full Disk Access"],
+    infoPage: InfoPageContent.searchAgent,
+    permissionsPage: PermissionsPage.searchAgent
 )
 
 // slide deck creator?

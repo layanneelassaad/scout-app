@@ -21,6 +21,8 @@ struct Agent: Identifiable {
     var categories: [Category]
     var requiredPermissions: [String]
     var recommendedPermissions: [String]
+    var infoPage: InfoPageContent?
+    var permissionsPage: PermissionsPage?
 
     var isFree: Bool {
         return price == 0.0

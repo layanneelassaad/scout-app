@@ -60,6 +60,7 @@ struct AgentStoreView: View {
     @State private var selectedView = 0
     @State private var searchText = ""
     @State private var showingAgentInfo: Agent? = nil
+    @State private var showingSettings: Agent? = nil
 
     private let categories = Category.allCategories
     
@@ -146,6 +147,8 @@ struct AgentStoreView: View {
                             }) { agent in
                                 InstalledAgentItemView(agent: agent, openWindow: openWindow) {
                                     showingAgentInfo = agent
+                                } onSettingsTap: {
+                                    showingSettings = agent
                                 }
                                 Divider()
                                     .background(Color.gray.opacity(0.3))
@@ -188,6 +191,12 @@ struct AgentStoreView: View {
                 Text("Unable to load checkout.")
                     .padding()
             }
+        }
+        .sheet(item: $showingAgentInfo) { agent in
+            InfoPage(agent: agent)
+        }
+        .sheet(item: $showingSettings) { agent in
+            SettingsPage(agent: agent)
         }
     }
 }
@@ -249,6 +258,11 @@ struct InstalledAgentGridView: View {
                     // It will be called when the user taps on the agent item
                     // The parent view (AgentStoreView) will handle updating showingAgentInfo
                     // and potentially opening the info window.
+                } onSettingsTap: {
+                    // This closure is passed to InstalledAgentItemView
+                    // It will be called when the user taps on the settings button
+                    // The parent view (AgentStoreView) will handle updating showingSettings
+                    // and potentially opening the settings window.
                 }
                 Divider()
                     .background(Color.gray.opacity(0.3))
@@ -280,6 +294,7 @@ struct InstalledAgentItemView: View {
     let agent: Agent
     let openWindow: OpenWindowAction
     let onInfoTap: () -> Void
+    let onSettingsTap: () -> Void
     @State private var isHovered = false
     @State private var isEnabled = true // Default to enabled
 
@@ -329,7 +344,7 @@ struct InstalledAgentItemView: View {
                             Circle()
                                 .fill(isEnabled ? Color.green : Color.gray)
                                 .frame(width: 6, height: 6)
-                            Text(isEnabled ? "Enabled" : "Disabled")
+                            Text(isEnabled ? "Active" : "Disabled")
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(isEnabled ? .green : .secondary)
                         }
@@ -363,7 +378,7 @@ struct InstalledAgentItemView: View {
                     
                     // Manage Permissions Button
                     Button(action: {
-                        // TODO: Show permissions management
+                        onSettingsTap()
                     }) {
                         Image(systemName: "gear")
                             .font(.system(size: 28, weight: .medium))

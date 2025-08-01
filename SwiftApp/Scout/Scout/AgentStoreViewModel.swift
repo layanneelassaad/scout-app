@@ -27,9 +27,6 @@ class AgentStoreViewModel: ObservableObject {
         // Load persisted purchased agents
         let savedIDs = UserDefaults.standard.array(forKey: "purchasedAgentIDs") as? [String] ?? []
         self.purchasedAgentIDs = Set(savedIDs)
-        
-        // Add File Scout as pre-installed
-        self.purchasedAgentIDs.insert(fileSearchAgentID.uuidString)
     }
     
     func buy(agent: Agent) {
