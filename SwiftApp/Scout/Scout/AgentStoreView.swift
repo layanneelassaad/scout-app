@@ -19,7 +19,7 @@ struct AgentStoreView: View {
     
     // App Store-style sections
     private let sections = [
-        ("Installed Scouts", "checkmark.circle.fill"),
+        ("Installed Agents", "checkmark.circle.fill"),
         ("Made by Scout", "sparkles"),
         ("Discover", "sparkles"),
         ("Productivity", "bolt.fill"),
@@ -30,7 +30,7 @@ struct AgentStoreView: View {
     private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
         let sectionName = sections[sectionIndex].0.lowercased()
         let categoryMap = [
-            "installed scouts": "installed",
+            "installed agents": "installed",
             "made by scout": "made by scout",
             "discover": "discover", 
             "productivity": "productivity",
@@ -384,6 +384,7 @@ struct StoreItemView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
+                    .frame(width: 100)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.blue)
