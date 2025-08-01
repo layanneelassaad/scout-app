@@ -19,12 +19,12 @@ struct AgentStoreView: View {
     
     // App Store-style sections
     private let sections = [
-        ("Installed Scouts", "checkmark.circle.fill", 0),
-        ("Made by Scout", "sparkles", 1),
-        ("Discover", "sparkles", 2),
-        ("Productivity", "bolt.fill", 3),
-        ("Development", "hammer.fill", 4),
-        ("Utilities", "wrench.and.screwdriver.fill", 5)
+        ("Installed Scouts", "checkmark.circle.fill"),
+        ("Made by Scout", "sparkles"),
+        ("Discover", "sparkles"),
+        ("Productivity", "bolt.fill"),
+        ("Development", "hammer.fill"),
+        ("Utilities", "wrench.and.screwdriver.fill")
     ]
     
     private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
@@ -51,16 +51,16 @@ struct AgentStoreView: View {
             VStack(spacing: 0) {
                 // Header in sidebar
                 VStack(spacing: 16) {
-                    Text("Scout")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
-                        .padding(.top, 20)
+//                    Text("Scout")
+//                        .font(.system(size: 24, weight: .bold, design: .rounded))
+//                        .foregroundColor(.primary)
+//                        .padding(.top, 20)
                     
                     // Search bar
                     ModernSearchBar(text: $searchText)
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+                .padding(.vertical, 20)
                 
                 Divider()
                     .background(Color.gray.opacity(0.3))
@@ -187,12 +187,14 @@ struct SideTabButton: View {
 struct InstalledAgentGridView: View {
     let agents: [Agent]
     let openWindow: OpenWindowAction
-    private let columns = [GridItem(.adaptive(minimum: 240))]
+    private let columns = [GridItem(.flexible())]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 20) {
+        LazyVStack(spacing: 0) {
             ForEach(agents) { agent in
                 InstalledAgentItemView(agent: agent, openWindow: openWindow)
+                Divider()
+                    .background(Color.gray.opacity(0.3))
             }
         }
         .padding(.horizontal, 32)
@@ -202,12 +204,14 @@ struct InstalledAgentGridView: View {
 
 struct AgentGridView: View {
     let agents: [Agent]
-    private let columns = [ GridItem(.adaptive(minimum: 260), spacing: 20) ]
+    private let columns = [GridItem(.flexible())]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 20) {
+        LazyVStack(spacing: 0) {
             ForEach(agents) { agent in
                 StoreItemView(agent: agent)
+                Divider()
+                    .background(Color.gray.opacity(0.3))
             }
         }
         .padding(.horizontal, 32)
@@ -221,62 +225,69 @@ struct InstalledAgentItemView: View {
     @State private var isHovered = false
 
     var body: some View {
-        VStack(spacing: 16) {
-            // Enhanced Icon with gradient background
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+        Button(action: {
+            openWindow(id: agent.apiID)
+        }) {
+            HStack(spacing: 16) {
+                // Icon
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-                    .frame(width: 80, height: 80)
-                
-                Image(systemName: agent.icon)
-                    .font(.system(size: 32, weight: .medium))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.blue, .purple],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                        .frame(width: 60, height: 60)
+                    
+                    Image(systemName: agent.icon)
+                        .font(.system(size: 24, weight: .medium))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.blue, .purple],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-            }
-            
-            // Content with better spacing
-            VStack(spacing: 6) {
-                Text(agent.name)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
+                }
                 
-                Text(agent.description)
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
+                // Content
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(agent.name)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    
+                    Text(agent.description)
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                // Status indicator
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.green)
+                    Text("Installed")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.green)
+                }
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isHovered ? Color(NSColor.controlBackgroundColor).opacity(0.8) : Color.clear)
+            )
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 24)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(NSColor.controlBackgroundColor))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(isHovered ? Color.blue.opacity(0.4) : Color.gray.opacity(0.1), lineWidth: 1)
-                )
-        )
-        .shadow(color: isHovered ? .blue.opacity(0.3) : .black.opacity(0.08), radius: isHovered ? 16 : 6, x: 0, y: isHovered ? 8 : 3)
-        .scaleEffect(isHovered ? 1.03 : 1.0)
-        .animation(.easeInOut(duration: 0.3), value: isHovered)
+        .buttonStyle(PlainButtonStyle())
         .onHover { hovering in
             isHovered = hovering
-        }
-        .onTapGesture {
-            openWindow(id: agent.apiID)
         }
     }
 }
@@ -288,10 +299,10 @@ struct StoreItemView: View {
     @State private var showingPermissionsWarning = false
 
     var body: some View {
-        VStack(spacing: 16) {
-            // Enhanced Icon
+        HStack(spacing: 16) {
+            // Icon
             ZStack {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
                             colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
@@ -299,10 +310,10 @@ struct StoreItemView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 80, height: 80)
+                    .frame(width: 60, height: 60)
                 
                 Image(systemName: agent.icon)
-                    .font(.system(size: 32, weight: .medium))
+                    .font(.system(size: 24, weight: .medium))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [.blue, .purple],
@@ -313,103 +324,82 @@ struct StoreItemView: View {
             }
             
             // Content
-            VStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(agent.name)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 Text(agent.description)
-                    .font(.system(size: 13, weight: .regular))
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.secondary)
                     .lineLimit(2)
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(.leading)
                 
-                // Enhanced Rating
+                // Rating
                 if agent.rating > 0 {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         Image(systemName: "star.fill")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.yellow)
                         Text(String(format: "%.1f", agent.rating))
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.primary)
                         Text("(\(agent.reviewCount))")
-                            .font(.system(size: 12, weight: .regular))
+                            .font(.system(size: 11, weight: .regular))
                             .foregroundColor(.secondary)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.yellow.opacity(0.1))
-                    )
                 }
             }
             
-            // Enhanced Action Button
+            Spacer()
+            
+            // Action Button
             if storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.green)
                     Text("Installed")
                         .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.green)
                 }
-                .foregroundColor(.green)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(Color.green.opacity(0.2))
-                )
             } else {
                 Button(action: { 
                     showingPermissionsWarning = true
                 }) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         if agent.isFree {
                             Image(systemName: "arrow.down.circle.fill")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(.system(size: 14, weight: .medium))
                             Text("Get")
                                 .font(.system(size: 14, weight: .medium))
                         } else {
                             Image(systemName: "cart.fill")
-                                .font(.system(size: 16, weight: .medium))
+                                .font(.system(size: 14, weight: .medium))
                             Text(String(format: "$%.2f", agent.price))
                                 .font(.system(size: 14, weight: .medium))
                         }
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
                     .background(
-                        LinearGradient(
-                            colors: [Color.blue, Color.blue.opacity(0.8)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.blue)
                     )
-                    .cornerRadius(10)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .disabled(storeVM.isProcessing)
             }
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 24)
+        .padding(.vertical, 16)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(NSColor.controlBackgroundColor))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(isHovered ? Color.blue.opacity(0.4) : Color.gray.opacity(0.1), lineWidth: 1)
-                )
+            RoundedRectangle(cornerRadius: 12)
+                .fill(isHovered ? Color(NSColor.controlBackgroundColor).opacity(0.8) : Color.clear)
         )
-        .shadow(color: isHovered ? .blue.opacity(0.3) : .black.opacity(0.08), radius: isHovered ? 16 : 6, x: 0, y: isHovered ? 8 : 3)
-        .scaleEffect(isHovered ? 1.03 : 1.0)
-        .animation(.easeInOut(duration: 0.3), value: isHovered)
         .onHover { isHovered = $0 }
-        .frame(minWidth: 260)
         .sheet(isPresented: $showingPermissionsWarning) {
             PermissionsWarningView(agent: agent)
         }
@@ -429,7 +419,7 @@ struct PermissionsWarningView: View {
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(.red)
                 
-                Text("The following permissions are required and the following are strongly recommended for top functionality:")
+                Text("The following permissions are required / strongly recommended for best functionality:")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
