@@ -129,12 +129,27 @@ struct StorePage: View {
                     }
                     
                     // Purchase Button
-                    if !storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
+                    let isDownloading = storeVM.downloadingAgents.contains(agent.id.uuidString)
+                    let isPurchased = storeVM.purchasedAgentIDs.contains(agent.id.uuidString)
+                    
+                    if !isPurchased {
                         Button(action: {
-                            showingPermissionsWarning = true
+                            if agent.requiredPermissions.isEmpty && agent.recommendedPermissions.isEmpty {
+                                // No permissions needed, install directly
+                                storeVM.installAgent(agent)
+                            } else {
+                                // Show permissions warning
+                                showingPermissionsWarning = true
+                            }
                         }) {
                             HStack(spacing: 8) {
-                                if agent.isFree {
+                                if isDownloading {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                    Text("Installing...")
+                                        .font(.system(size: 18, weight: .semibold))
+                                } else if agent.isFree {
                                     Image(systemName: "arrow.down.circle.fill")
                                         .font(.system(size: 18, weight: .medium))
                                     Text("Get")
@@ -162,7 +177,22 @@ struct StorePage: View {
                             .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
                         }
                         .buttonStyle(PlainButtonStyle())
-                        .disabled(storeVM.isProcessing)
+                        .disabled(storeVM.isProcessing || isDownloading)
+                    } else {
+                        // Show installed status
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 18, weight: .medium))
+                            Text("Installed")
+                                .font(.system(size: 18, weight: .semibold))
+                        }
+                        .foregroundColor(.green)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.green.opacity(0.1))
+                        )
                     }
                     
                     // Detailed Description
@@ -218,28 +248,54 @@ struct StorePage: View {
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.primary)
                         
-                        VStack(spacing: 8) {
-                            ForEach(agent.requiredPermissions, id: \.self) { permission in
-                                HStack(spacing: 8) {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.red)
-                                        .font(.system(size: 12, weight: .medium))
-                                    Text(permission)
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.primary)
-                                    Spacer()
+                        VStack(spacing: 12) {
+                            // Required Permissions
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Required")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                
+                                if agent.requiredPermissions.isEmpty || (agent.requiredPermissions.count == 1 && agent.requiredPermissions[0].isEmpty) {
+                                    Text("None required")
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    ForEach(agent.requiredPermissions.filter { !$0.isEmpty }, id: \.self) { permission in
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "exclamationmark.triangle.fill")
+                                                .foregroundColor(.red)
+                                                .font(.system(size: 12, weight: .medium))
+                                            Text(permission)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(.primary)
+                                            Spacer()
+                                        }
+                                    }
                                 }
                             }
                             
-                            ForEach(agent.recommendedPermissions, id: \.self) { permission in
-                                HStack(spacing: 8) {
-                                    Image(systemName: "info.circle.fill")
-                                        .foregroundColor(.orange)
-                                        .font(.system(size: 12, weight: .medium))
-                                    Text(permission)
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.primary)
-                                    Spacer()
+                            // Recommended Permissions
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Recommended")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                
+                                if agent.recommendedPermissions.isEmpty {
+                                    Text("None recommended")
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    ForEach(agent.recommendedPermissions, id: \.self) { permission in
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "info.circle.fill")
+                                                .foregroundColor(.orange)
+                                                .font(.system(size: 12, weight: .medium))
+                                            Text(permission)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(.primary)
+                                            Spacer()
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -285,7 +341,6 @@ struct StorePage: View {
                 .padding(20)
             }
         }
-        .frame(width: 700, height: 800)
         .background(Color(NSColor.windowBackgroundColor))
         .sheet(isPresented: $showingPermissionsWarning) {
             PermissionsWarningView(agent: agent)

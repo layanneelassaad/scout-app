@@ -10,7 +10,6 @@ import Combine
 
 struct AnimatedDownloadIndicator: View {
     @State private var animationProgress: Double = 0
-    @State private var animationSpeed: Double = 1.0
     @State private var timer: Timer?
     
     var body: some View {
@@ -35,15 +34,24 @@ struct AnimatedDownloadIndicator: View {
     }
     
     private func startAnimation() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            withAnimation(.linear(duration: 0.1)) {
-                animationProgress += 0.05 * animationSpeed
-                if animationProgress >= 1.0 {
-                    animationProgress = 0
-                    // Randomize speed between 0.5 and 2.0
-                    animationSpeed = Double.random(in: 0.5...2.0)
-                }
+        animateStep()
+    }
+    
+    private func animateStep() {
+        // Random progress increment between 0.02 and 0.08
+        let progressIncrement = Double.random(in: 0.02...0.08)
+        
+        withAnimation(.linear(duration: 0.1)) {
+            animationProgress += progressIncrement
+            if animationProgress >= 1.0 {
+                animationProgress = 0
             }
+        }
+        
+        // Random delay between 0.05 and 0.2 seconds
+        let randomDelay = Double.random(in: 0.05...0.2)
+        timer = Timer.scheduledTimer(withTimeInterval: randomDelay, repeats: false) { _ in
+            animateStep()
         }
     }
     
@@ -632,13 +640,18 @@ struct PermissionsWarningView: View {
                 
                 Button(agent.isFree ? "Install" : "Buy Agent") {
                     if agent.isFree {
-                        storeVM.installAgent(agent)
+                        // Prevent multiple installations
+                        if !storeVM.downloadingAgents.contains(agent.id.uuidString) && 
+                           !storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
+                            storeVM.installAgent(agent)
+                        }
                     } else {
                         storeVM.buy(agent: agent)
                     }
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
+                .disabled(storeVM.downloadingAgents.contains(agent.id.uuidString))
             }
         }
         .padding(32)

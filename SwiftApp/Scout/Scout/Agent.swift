@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Agent: Identifiable {
+struct Agent: Identifiable, Hashable {
     let id: UUID
     let apiID: String
     var name: String
@@ -26,5 +26,14 @@ struct Agent: Identifiable {
 
     var isFree: Bool {
         return price == 0.0
+    }
+    
+    // Hashable conformance using the id property
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: Agent, rhs: Agent) -> Bool {
+        return lhs.id == rhs.id
     }
 }

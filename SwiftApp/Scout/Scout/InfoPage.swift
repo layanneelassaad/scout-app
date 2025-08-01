@@ -35,6 +35,8 @@ struct InfoPageContent {
 struct InfoPage: View {
     let agent: Agent
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var storeVM: AgentStoreViewModel
+    @State private var showingStorePage = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -59,7 +61,7 @@ struct InfoPage: View {
                 
                 // Store Button
                 Button(action: {
-                    // TODO: Navigate to store page
+                    showingStorePage = true
                 }) {
                     HStack(spacing: 6) {
                         Image(systemName: "cart.fill")
@@ -175,28 +177,54 @@ struct InfoPage: View {
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.primary)
                         
-                        VStack(spacing: 8) {
-                            ForEach(agent.requiredPermissions, id: \.self) { permission in
-                                HStack(spacing: 8) {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.red)
-                                        .font(.system(size: 12, weight: .medium))
-                                    Text(permission)
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.primary)
-                                    Spacer()
+                        VStack(spacing: 12) {
+                            // Required Permissions
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Required")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                
+                                if agent.requiredPermissions.isEmpty || (agent.requiredPermissions.count == 1 && agent.requiredPermissions[0].isEmpty) {
+                                    Text("None required")
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    ForEach(agent.requiredPermissions.filter { !$0.isEmpty }, id: \.self) { permission in
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "exclamationmark.triangle.fill")
+                                                .foregroundColor(.red)
+                                                .font(.system(size: 12, weight: .medium))
+                                            Text(permission)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(.primary)
+                                            Spacer()
+                                        }
+                                    }
                                 }
                             }
                             
-                            ForEach(agent.recommendedPermissions, id: \.self) { permission in
-                                HStack(spacing: 8) {
-                                    Image(systemName: "info.circle.fill")
-                                        .foregroundColor(.orange)
-                                        .font(.system(size: 12, weight: .medium))
-                                    Text(permission)
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.primary)
-                                    Spacer()
+                            // Recommended Permissions
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Recommended")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                
+                                if agent.recommendedPermissions.isEmpty {
+                                    Text("None recommended")
+                                        .font(.system(size: 14, weight: .regular))
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    ForEach(agent.recommendedPermissions, id: \.self) { permission in
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "info.circle.fill")
+                                                .foregroundColor(.orange)
+                                                .font(.system(size: 12, weight: .medium))
+                                            Text(permission)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(.primary)
+                                            Spacer()
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -213,5 +241,8 @@ struct InfoPage: View {
         }
         .frame(width: 600, height: 700)
         .background(Color(NSColor.windowBackgroundColor))
+        .sheet(isPresented: $showingStorePage) {
+            StorePage(agent: agent)
+        }
     }
 } 
