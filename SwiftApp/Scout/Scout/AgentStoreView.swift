@@ -16,64 +16,112 @@ struct AgentStoreView: View {
     @State private var searchText = ""
 
     private let agents = allAgents
-    private let installedAgents = allAgents.filter { $0.name == "File Search" }
+    
+    // App Store-style sections
+    private let sections = [
+        ("Installed Scouts", "checkmark.circle.fill", 0),
+        ("Discover", "sparkles", 1),
+        ("Productivity", "bolt.fill", 2),
+        ("Development", "hammer.fill", 3),
+        ("Utilities", "wrench.and.screwdriver.fill", 4)
+    ]
+    
+    private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
+        let sectionName = sections[sectionIndex].0.lowercased()
+        let categoryMap = [
+            "installed scouts": "installed",
+            "discover": "discover", 
+            "productivity": "productivity",
+            "development": "development",
+            "utilities": "utilities"
+        ]
+        
+        let targetCategory = categoryMap[sectionName] ?? ""
+        
+        return agents.filter { agent in
+            agent.categories.contains(targetCategory)
+        }
+    }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
-            VStack(spacing: 16) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Scout Agent Store")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundColor(.primary)
-                        Text("Discover and install powerful AI agents")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.secondary)
-                    }
+        HStack(spacing: 0) {
+            // Sidebar with tabs
+            VStack(spacing: 0) {
+                // Header in sidebar
+                VStack(spacing: 16) {
+                    Text("Scout")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                        .padding(.top, 20)
                     
-                    Spacer()
+                    // Search bar
+                    ModernSearchBar(text: $searchText)
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                
+                // Side tabs
+                VStack(spacing: 0) {
+                    ForEach(Array(sections.enumerated()), id: \.offset) { index, section in
+                        SideTabButton(
+                            title: section.0,
+                            icon: section.1,
+                            isSelected: selectedView == index
+                        ) {
+                            selectedView = index
+                        }
+                    }
                 }
                 
-                // View Picker
-                Picker("View:", selection: $selectedView) {
-                    Text("Installed").tag(0)
-                    Text("Store").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 300)
-                
-                // Search Bar
-                ModernSearchBar(text: $searchText)
+                Spacer()
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 20)
-            .background(Color(NSColor.windowBackgroundColor))
+            .frame(width: 250)
+            .background(Color(NSColor.controlBackgroundColor))
             
             Divider()
                 .background(Color.gray.opacity(0.3))
             
-            // Content
-            ScrollView {
-                if selectedView == 0 {
-                    InstalledAgentGridView(
-                        agents: installedAgents
-                            .filter {
-                                searchText.isEmpty ||
-                                $0.name.localizedCaseInsensitiveContains(searchText)
-                            },
-                        openWindow: openWindow
-                    )
-                } else {
-                    AgentGridView(
-                        agents: agents
-                            .filter {
-                                searchText.isEmpty ||
-                                $0.name.localizedCaseInsensitiveContains(searchText)
-                            }
-                    )
+            // Main content area
+            VStack(spacing: 0) {
+                // Content header
+                HStack {
+                    Text(sections[selectedView].0)
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
+                .padding(.horizontal, 32)
+                .padding(.vertical, 24)
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                
+                // Content
+                ScrollView {
+                    if selectedView == 0 {
+                        InstalledAgentGridView(
+                            agents: agentsForSection(0)
+                                .filter {
+                                    searchText.isEmpty ||
+                                    $0.name.localizedCaseInsensitiveContains(searchText)
+                                },
+                            openWindow: openWindow
+                        )
+                    } else {
+                        AgentGridView(
+                            agents: agentsForSection(selectedView)
+                                .filter {
+                                    searchText.isEmpty ||
+                                    $0.name.localizedCaseInsensitiveContains(searchText)
+                                }
+                        )
+                    }
                 }
             }
+            .background(Color(NSColor.windowBackgroundColor))
         }
         .background(Color(NSColor.windowBackgroundColor))
         .sheet(isPresented: $storeVM.showingCheckout) {
@@ -103,33 +151,64 @@ struct AgentStoreView: View {
     }
 }
 
+struct SideTabButton: View {
+    let title: String
+    let icon: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(isSelected ? .blue : .secondary)
+                    .frame(width: 20, alignment: .leading)
+                
+                Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(isSelected ? .primary : .secondary)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isSelected ? Color.blue.opacity(0.1) : Color.clear)
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 struct InstalledAgentGridView: View {
     let agents: [Agent]
     let openWindow: OpenWindowAction
-    private let columns = [GridItem(.adaptive(minimum: 200))]
+    private let columns = [GridItem(.adaptive(minimum: 240))]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 24) {
+        LazyVGrid(columns: columns, spacing: 20) {
             ForEach(agents) { agent in
                 InstalledAgentItemView(agent: agent, openWindow: openWindow)
             }
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, 32)
         .padding(.vertical, 20)
     }
 }
 
 struct AgentGridView: View {
     let agents: [Agent]
-    private let columns = [ GridItem(.adaptive(minimum: 220), spacing: 24) ]
+    private let columns = [ GridItem(.adaptive(minimum: 260), spacing: 20) ]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 24) {
+        LazyVGrid(columns: columns, spacing: 20) {
             ForEach(agents) { agent in
                 StoreItemView(agent: agent)
             }
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, 32)
         .padding(.vertical, 20)
     }
 }
@@ -141,12 +220,12 @@ struct InstalledAgentItemView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // Icon
+            // Enhanced Icon with gradient background
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
                         LinearGradient(
-                            colors: [Color.blue.opacity(0.2), Color.purple.opacity(0.2)],
+                            colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -164,8 +243,8 @@ struct InstalledAgentItemView: View {
                     )
             }
             
-            // Content
-            VStack(spacing: 8) {
+            // Content with better spacing
+            VStack(spacing: 6) {
                 Text(agent.name)
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.primary)
@@ -185,19 +264,17 @@ struct InstalledAgentItemView: View {
                 .fill(Color(NSColor.controlBackgroundColor))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(isHovered ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: 1)
+                        .stroke(isHovered ? Color.blue.opacity(0.4) : Color.gray.opacity(0.1), lineWidth: 1)
                 )
         )
-        .shadow(color: isHovered ? .blue.opacity(0.2) : .black.opacity(0.05), radius: isHovered ? 12 : 4, x: 0, y: isHovered ? 6 : 2)
-        .scaleEffect(isHovered ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: isHovered)
+        .shadow(color: isHovered ? .blue.opacity(0.3) : .black.opacity(0.08), radius: isHovered ? 16 : 6, x: 0, y: isHovered ? 8 : 3)
+        .scaleEffect(isHovered ? 1.03 : 1.0)
+        .animation(.easeInOut(duration: 0.3), value: isHovered)
         .onHover { hovering in
             isHovered = hovering
         }
         .onTapGesture {
-            if agent.name == "File Search" {
-                openWindow(id: "file-search")
-            }
+            openWindow(id: agent.apiID)
         }
     }
 }
@@ -209,12 +286,12 @@ struct StoreItemView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // Icon
+            // Enhanced Icon
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(
                         LinearGradient(
-                            colors: [Color.blue.opacity(0.2), Color.purple.opacity(0.2)],
+                            colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -245,55 +322,61 @@ struct StoreItemView: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
                 
-                // Rating
+                // Enhanced Rating
                 if agent.rating > 0 {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 6) {
                         Image(systemName: "star.fill")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.yellow)
                         Text(String(format: "%.1f", agent.rating))
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.primary)
                         Text("(\(agent.reviewCount))")
-                            .font(.system(size: 11, weight: .regular))
+                            .font(.system(size: 12, weight: .regular))
                             .foregroundColor(.secondary)
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.yellow.opacity(0.1))
+                    )
                 }
             }
             
-            // Action Button
+            // Enhanced Action Button
             if storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 16, weight: .medium))
                     Text("Purchased")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: 14, weight: .medium))
                 }
                 .foregroundColor(.green)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
                 .background(
                     Capsule()
                         .fill(Color.green.opacity(0.2))
                 )
             } else {
                 Button(action: { storeVM.buy(agent: agent) }) {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 8) {
                         if agent.price == 0 {
                             Image(systemName: "arrow.down.circle.fill")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.system(size: 16, weight: .medium))
                             Text("Free")
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.system(size: 14, weight: .medium))
                         } else {
                             Image(systemName: "cart.fill")
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.system(size: 16, weight: .medium))
                             Text(String(format: "$%.2f", agent.price))
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.system(size: 14, weight: .medium))
                         }
                     }
                     .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
                     .background(
                         LinearGradient(
                             colors: [Color.blue, Color.blue.opacity(0.8)],
@@ -301,7 +384,7 @@ struct StoreItemView: View {
                             endPoint: .trailing
                         )
                     )
-                    .cornerRadius(8)
+                    .cornerRadius(10)
                 }
                 .buttonStyle(PlainButtonStyle())
                 .disabled(storeVM.isProcessing)
@@ -314,14 +397,14 @@ struct StoreItemView: View {
                 .fill(Color(NSColor.controlBackgroundColor))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(isHovered ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1), lineWidth: 1)
+                        .stroke(isHovered ? Color.blue.opacity(0.4) : Color.gray.opacity(0.1), lineWidth: 1)
                 )
         )
-        .shadow(color: isHovered ? .blue.opacity(0.2) : .black.opacity(0.05), radius: isHovered ? 12 : 4, x: 0, y: isHovered ? 6 : 2)
-        .scaleEffect(isHovered ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.2), value: isHovered)
+        .shadow(color: isHovered ? .blue.opacity(0.3) : .black.opacity(0.08), radius: isHovered ? 16 : 6, x: 0, y: isHovered ? 8 : 3)
+        .scaleEffect(isHovered ? 1.03 : 1.0)
+        .animation(.easeInOut(duration: 0.3), value: isHovered)
         .onHover { isHovered = $0 }
-        .frame(minWidth: 220)
+        .frame(minWidth: 260)
     }
 }
 

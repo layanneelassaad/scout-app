@@ -18,10 +18,11 @@ let summarizerAgent = Agent(
   description: "Extracts and condenses info from emails, Slack, Teams, PDFs, and web pages with smart AI.",
   icon: "doc.plaintext",
   price: 7.99,
-  rating: 4.3,
-  reviewCount: 512,
+  rating: 4.5,
+  reviewCount: 2,
   requiredToolsetIDs: [],
-  dependentAgentIDs: []
+  dependentAgentIDs: [],
+  categories: ["productivity", "discover"]
 )
 
 let emailTriageAgent = Agent(
@@ -31,10 +32,11 @@ let emailTriageAgent = Agent(
   description: "Sorts, filters, drafts replies, and schedules follow-ups on your inbox.",
   icon: "envelope.open",
   price: 7.99,
-  rating: 4.2,
-  reviewCount: 478,
+  rating: 5,
+  reviewCount: 1,
   requiredToolsetIDs: [],
-  dependentAgentIDs: []
+  dependentAgentIDs: [],
+  categories: ["productivity", "discover"]
 )
 
 let meetingNoteAgent = Agent(
@@ -44,24 +46,26 @@ let meetingNoteAgent = Agent(
   description: "Transcribes meetings, highlights actions, and links tasks to your projects.",
   icon: "mic.fill",
   price: 6.99,
-  rating: 4.4,
-  reviewCount: 390,
+  rating: 4,
+  reviewCount: 2,
   requiredToolsetIDs: [],
-  dependentAgentIDs: []
+  dependentAgentIDs: [],
+  categories: ["productivity", "discover"]
 )
 
 
 let fileSearchAgent = Agent(
     id: UUID(),
-    apiID:"meeting-note-taker",
-    name: "File Search",
+    apiID:"file-search",
+    name: "File Scout",
     description: "Search and analyze files on your system with advanced filtering.",
     icon: "magnifyingglass.circle.fill",
     price: 0.0,
-    rating: 4.7,
-    reviewCount: 89,
+    rating: 5,
+    reviewCount: 2,
     requiredToolsetIDs: [],
-    dependentAgentIDs: []
+    dependentAgentIDs: [],
+    categories: ["installed", "utilities"]
 )
 
 let allAgents = [fileSearchAgent,

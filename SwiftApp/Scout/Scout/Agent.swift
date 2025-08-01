@@ -18,6 +18,7 @@ struct Agent: Identifiable, Codable {
     var reviewCount: Int
     var requiredToolsetIDs: [UUID]
     var dependentAgentIDs: [UUID]
+    var categories: [String]
 
     var isFree: Bool {
         return price == 0.0

@@ -19,6 +19,7 @@ struct ScoutApp: App {
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
+        .defaultSize(width: 1200, height: 800)
         .commands {
             CommandGroup(after: .appInfo) {
                 Divider()

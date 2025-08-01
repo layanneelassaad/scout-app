@@ -19,7 +19,7 @@ struct FileSearchView: View {
             VStack(spacing: 12) {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("File Search")
+                        Text("File Scout")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
                             .foregroundColor(.primary)
                         Text("Search through your indexed files and content")
