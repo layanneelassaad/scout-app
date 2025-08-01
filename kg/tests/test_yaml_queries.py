@@ -5,9 +5,9 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from query_engine import KnowledgeGraphQueryEngine
-from graph_store import KnowledgeGraphStore
-from embeddings import EmbeddingManager
+from kg.query_engine import KnowledgeGraphQueryEngine
+from kg.graph_store import KnowledgeGraphStore
+from kg.embeddings import EmbeddingManager
 
 def create_test_data(graph_store):
     """Create some test data with dates and file extensions."""

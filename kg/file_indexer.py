@@ -7,13 +7,13 @@ import logging
 from datetime import datetime
 from typing import Dict, List, Any, Optional
 
-from .graph_store import KnowledgeGraphStore
-from .embeddings import EmbeddingManager
-from .entity_types import ContactManager
-from .contact_context import ContactContextManager
-from .file_operations import FileOperations
-from .content_processor import ContentProcessor
-from .entity_analyzer import EntityAnalyzer
+from kg.graph_store import KnowledgeGraphStore
+from kg.embeddings import EmbeddingManager
+from kg.entity_types import ContactManager
+from kg.contact_context import ContactContextManager
+from kg.file_operations import FileOperations
+from kg.content_processor import ContentProcessor
+from kg.entity_analyzer import EntityAnalyzer
 
 logger = logging.getLogger(__name__)
 

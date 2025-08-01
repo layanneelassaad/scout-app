@@ -36,7 +36,7 @@ def test_condition_evaluator():
     print("Testing ConditionEvaluator directly...")
     
     # Import directly from the file
-    from query.condition_evaluators import ConditionEvaluator
+    from kg.query.condition_evaluators import ConditionEvaluator
     
     # Test data
     node_data = {
@@ -74,7 +74,7 @@ def test_filter_processor():
     print("\nTesting FilterProcessor with comparison operators...")
     
     # Import directly from the file
-    from query.filter_processors import FilterProcessor
+    from kg.query.filter_processors import FilterProcessor
     
     # Create mock data
     graph_store = MockGraphStore()

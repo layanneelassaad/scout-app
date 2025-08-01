@@ -6,9 +6,9 @@ This script tests basic queries with the correct YAML format.
 """
 
 import os
-from graph_store import KnowledgeGraphStore
-from embeddings import EmbeddingManager
-from query_engine import KnowledgeGraphQueryEngine
+from kg.graph_store import KnowledgeGraphStore
+from kg.embeddings import EmbeddingManager
+from kg.query_engine import KnowledgeGraphQueryEngine
 
 def main():
     """Test basic queries."""

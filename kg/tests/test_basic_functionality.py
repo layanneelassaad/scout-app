@@ -14,7 +14,7 @@ def test_graph_store_basic():
     """Test basic graph store functionality."""
     print("=== Testing Basic Graph Store ===")
     
-    from graph_store import KnowledgeGraphStore
+    from kg.graph_store import KnowledgeGraphStore
     
     # Create a temporary directory for storage
     temp_dir = tempfile.mkdtemp()
@@ -59,7 +59,7 @@ def test_file_operations():
     """Test file operations functionality."""
     print("\n=== Testing File Operations ===")
     
-    from file_operations import FileOperations
+    from kg.file_operations import FileOperations
     
     # Create a temporary test file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
@@ -90,7 +90,7 @@ def test_query_parsing():
     """Test query parsing functionality."""
     print("\n=== Testing Query Parsing ===")
     
-    from query.query_parsers import QueryParser
+    from kg.query.query_parsers import QueryParser
     
     try:
         parser = QueryParser()
@@ -119,7 +119,7 @@ def test_condition_evaluator():
     """Test condition evaluator functionality."""
     print("\n=== Testing Condition Evaluator ===")
     
-    from query.condition_evaluators import ConditionEvaluator
+    from kg.query.condition_evaluators import ConditionEvaluator
     
     try:
         # Test data
@@ -154,7 +154,7 @@ def test_line_format_parser():
     """Test line format parser functionality."""
     print("\n=== Testing Line Format Parser ===")
     
-    from line_format_parser import LineFormatParser
+    from kg.line_format_parser import LineFormatParser
     
     try:
         # Test format instructions

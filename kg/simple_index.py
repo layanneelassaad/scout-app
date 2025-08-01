@@ -9,9 +9,9 @@ from pathlib import Path
 # Add the current directory to the path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from graph_store import KnowledgeGraphStore
+from kg.graph_store import KnowledgeGraphStore
 from file_indexer import FileIndexer
-from embeddings import EmbeddingManager
+from kg.embeddings import EmbeddingManager
 
 # Files to exclude from indexing
 EXCLUDED_FILES = {

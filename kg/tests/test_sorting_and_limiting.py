@@ -8,10 +8,10 @@ import os
 sys.path.insert(0, '/xfiles/upd2/mr_kg/src/mr_kg')
 
 # Import modules directly
-from graph_store import KnowledgeGraphStore
-from embeddings import EmbeddingManager
-from query.query_parsers import QueryParser
-from query.query_compilers import QueryCompiler
+from kg.graph_store import KnowledgeGraphStore
+from kg.embeddings import EmbeddingManager
+from kg.query.query_parsers import QueryParser
+from kg.query.query_compilers import QueryCompiler
 from query.result_formatters import ResultFormatter
 
 def test_sorting_and_limiting():

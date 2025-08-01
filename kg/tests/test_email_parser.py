@@ -8,7 +8,7 @@ from pathlib import Path
 # Add the parent directory to the path so we can import the modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from email_parser import parse_eml_file
+from kg.email_parser import parse_eml_file
 
 def create_sample_eml(file_path: str):
     """Create a sample .eml file for testing."""

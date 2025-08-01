@@ -5,9 +5,9 @@ Pytest configuration and fixtures for knowledge graph tests.
 import pytest
 import os
 import tempfile
-from graph_store import KnowledgeGraphStore
-from embeddings import EmbeddingManager
-from query_engine import KnowledgeGraphQueryEngine
+from kg.graph_store import KnowledgeGraphStore
+from kg.embeddings import EmbeddingManager
+from kg.query_engine import KnowledgeGraphQueryEngine
 
 @pytest.fixture
 def query_engine():

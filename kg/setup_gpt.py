@@ -111,9 +111,9 @@ def test_with_files(file_paths):
     print("=" * 60)
     
     # Import your existing components
-    from graph_store import KnowledgeGraphStore
+    from kg.graph_store import KnowledgeGraphStore
     from file_indexer import FileIndexer
-    from embeddings import EmbeddingManager
+    from kg.embeddings import EmbeddingManager
     
     # Initialize components (same as your simple_index.py)
     storage_path = os.path.expanduser("~/.mr_kg_data/knowledge_graph.json")

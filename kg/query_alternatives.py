@@ -8,9 +8,9 @@ beyond the current YAML format.
 
 import json
 from typing import Dict, Any, List
-from graph_store import KnowledgeGraphStore
-from embeddings import EmbeddingManager
-from query_engine import KnowledgeGraphQueryEngine
+from kg.graph_store import KnowledgeGraphStore
+from kg.embeddings import EmbeddingManager
+from kg.query_engine import KnowledgeGraphQueryEngine
 
 class AlternativeQueryEngine:
     """Demonstrates alternative query formats."""
