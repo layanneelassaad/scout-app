@@ -29,17 +29,6 @@ struct FileSearchView: View {
                     
                     Spacer()
                     
-                    // Settings Button
-                    Button(action: {
-                        showingSettings = true
-                    }) {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .help("Settings")
-                    
                     // Connection Status (only show if developer view is enabled)
                     if developerViewEnabled {
                         HStack(spacing: 8) {
@@ -61,6 +50,18 @@ struct FileSearchView: View {
                                 )
                         )
                     }
+                    
+                    // Settings Button
+                    Button(action: {
+                        showingSettings = true
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .help("Settings")
+                    
                 }
                 
                 // Search Bar
@@ -115,7 +116,7 @@ struct FileSearchView: View {
                     
                     // Raw SSE Data
                     StatusPanel(
-                        title: "Raw SSE Data",
+                        title: "Raw Stream",
                         isExpanded: .constant(false),
                         content: viewModel.rawSSEData,
                         currentCommand: nil
@@ -138,6 +139,7 @@ struct FileSearchView: View {
                     Spacer()
                 }
                 .padding(.horizontal, 20)
+                .padding(.top, 16)
                 
                 if viewModel.files.isEmpty {
                     VStack(spacing: 12) {

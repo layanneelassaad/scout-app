@@ -157,6 +157,7 @@ final class APIService: NSObject, URLSessionDataDelegate {
        
                 connectionStatus.send("Search failed: \(error.localizedDescription)")
                 isConnected.send(false)
+                isSearching.send(false)
             }
         }
     }
@@ -358,6 +359,7 @@ final class APIService: NSObject, URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         DispatchQueue.main.async {
             self.isConnected.send(false)
+            self.isSearching.send(false)
 
             // If the error is a cancellation, it's an expected part of the disconnect flow.
             // We don't need to show a user-facing message.
