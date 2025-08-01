@@ -11,11 +11,13 @@ let allToolsets = [githubToolset, mailToolset, calendarToolset, blenderToolset, 
 
 // MARK: - Mock Agents
 
+let fileSearchAgentID = UUID(uuidString: "550e8400-e29b-41d4-a716-446655440000")!
+
 let summarizerAgent = Agent(
   id: UUID(),
   apiID: "cross-app-summarizer",
   name: "Report Generator",
-  description: "Creates reports by extracting info from emails, Slack, Teams, PDFs, and more.",
+  description: "Creates detailed reports by extracting info from emails, Slack, Teams, PDFs, and more.",
   icon: "doc.plaintext",
   price: 0.99,
   rating: 4.5,
@@ -47,7 +49,7 @@ let meetingNoteAgent = Agent(
   id: UUID(),
   apiID: "meeting-note-taker",
   name: "Meeting Note-Taker",
-  description: "Transcribes meetings, highlights actions, and links tasks to your projects.",
+  description: "Transcribes meetings, creates todo lists, and links tasks to your projects.",
   icon: "mic.fill",
   price: 0.0,
   rating: 4,
@@ -56,12 +58,12 @@ let meetingNoteAgent = Agent(
   dependentAgentIDs: [],
   categories: ["made by scout"],
   requiredPermissions: ["Microphone"],
-  recommendedPermissions: ["Screen Recording", "Full Disk Access"]
+  recommendedPermissions: ["Screen Recording", "Full Disk Access", "Calendar Access"]
 )
 
 
 let fileSearchAgent = Agent(
-    id: UUID(),
+    id: fileSearchAgentID,
     apiID:"file-search",
     name: "File Scout",
     description: "Surface any information xyz.",

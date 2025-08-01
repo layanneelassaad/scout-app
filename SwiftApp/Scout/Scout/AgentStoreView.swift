@@ -6,7 +6,52 @@
 //
 
 import SwiftUI
+import Combine
 
+struct AnimatedDownloadIndicator: View {
+    @State private var animationProgress: Double = 0
+    @State private var animationSpeed: Double = 1.0
+    @State private var timer: Timer?
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.gray.opacity(0.3), lineWidth: 2)
+                .frame(width: 20, height: 20)
+            
+            Circle()
+                .trim(from: 0, to: animationProgress)
+                .stroke(Color.blue, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                .frame(width: 20, height: 20)
+                .rotationEffect(.degrees(-90))
+                .animation(.linear(duration: 0.1), value: animationProgress)
+        }
+        .onAppear {
+            startAnimation()
+        }
+        .onDisappear {
+            stopAnimation()
+        }
+    }
+    
+    private func startAnimation() {
+        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+            withAnimation(.linear(duration: 0.1)) {
+                animationProgress += 0.05 * animationSpeed
+                if animationProgress >= 1.0 {
+                    animationProgress = 0
+                    // Randomize speed between 0.5 and 2.0
+                    animationSpeed = Double.random(in: 0.5...2.0)
+                }
+            }
+        }
+    }
+    
+    private func stopAnimation() {
+        timer?.invalidate()
+        timer = nil
+    }
+}
 
 struct AgentStoreView: View {
     @EnvironmentObject var storeVM: AgentStoreViewModel
@@ -15,11 +60,8 @@ struct AgentStoreView: View {
     @State private var selectedView = 0
     @State private var searchText = ""
 
-    private let agents = allAgents
-    
-    // App Store-style sections
     private let sections = [
-        ("Installed Agents", "checkmark.circle.fill"),
+        ("Installed Scouts", "checkmark.circle.fill"),
         ("Made by Scout", "sparkles"),
         ("Discover", "sparkles"),
         ("Productivity", "bolt.fill"),
@@ -29,19 +71,9 @@ struct AgentStoreView: View {
     
     private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
         let sectionName = sections[sectionIndex].0.lowercased()
-        let categoryMap = [
-            "installed agents": "installed",
-            "made by scout": "made by scout",
-            "discover": "discover", 
-            "productivity": "productivity",
-            "development": "development",
-            "utilities": "utilities"
-        ]
         
-        let targetCategory = categoryMap[sectionName] ?? ""
-        
-        return agents.filter { agent in
-            agent.categories.contains(targetCategory)
+        return allAgents.filter { agent in
+            agent.categories.contains(sectionName)
         }
     }
 
@@ -355,7 +387,14 @@ struct StoreItemView: View {
             Spacer()
             
             // Action Button
-            if storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
+            if storeVM.downloadingAgents.contains(agent.id.uuidString) {
+                HStack(spacing: 6) {
+                    AnimatedDownloadIndicator()
+                    Text("Installing...")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.blue)
+                }
+            } else if storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 16, weight: .medium))
@@ -468,7 +507,11 @@ struct PermissionsWarningView: View {
                 .buttonStyle(.bordered)
                 
                 Button(agent.isFree ? "Install" : "Buy Agent") {
-                    storeVM.buy(agent: agent)
+                    if agent.isFree {
+                        storeVM.installAgent(agent)
+                    } else {
+                        storeVM.buy(agent: agent)
+                    }
                     dismiss()
                 }
                 .buttonStyle(.borderedProminent)
