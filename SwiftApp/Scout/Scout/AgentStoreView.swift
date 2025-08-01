@@ -59,6 +59,7 @@ struct AgentStoreView: View {
 
     @State private var selectedView = 0
     @State private var searchText = ""
+    @State private var showingAgentInfo: Agent? = nil
 
     private let categories = Category.allCategories
     
@@ -138,14 +139,18 @@ struct AgentStoreView: View {
                 // Content
                 ScrollView {
                     if selectedView == 0 {
-                        InstalledAgentGridView(
-                            agents: agentsForSection(0)
-                                .filter {
-                                    searchText.isEmpty ||
-                                    $0.name.localizedCaseInsensitiveContains(searchText)
-                                },
-                            openWindow: openWindow
-                        )
+                        LazyVStack(spacing: 0) {
+                            ForEach(agentsForSection(0).filter {
+                                searchText.isEmpty ||
+                                $0.name.localizedCaseInsensitiveContains(searchText)
+                            }) { agent in
+                                InstalledAgentItemView(agent: agent, openWindow: openWindow) {
+                                    showingAgentInfo = agent
+                                }
+                                Divider()
+                                    .background(Color.gray.opacity(0.3))
+                            }
+                        }
                     } else {
                         AgentGridView(
                             agents: agentsForSection(selectedView)
@@ -239,7 +244,12 @@ struct InstalledAgentGridView: View {
     var body: some View {
         LazyVStack(spacing: 0) {
             ForEach(agents) { agent in
-                InstalledAgentItemView(agent: agent, openWindow: openWindow)
+                InstalledAgentItemView(agent: agent, openWindow: openWindow) {
+                    // This closure is passed to InstalledAgentItemView
+                    // It will be called when the user taps on the agent item
+                    // The parent view (AgentStoreView) will handle updating showingAgentInfo
+                    // and potentially opening the info window.
+                }
                 Divider()
                     .background(Color.gray.opacity(0.3))
             }
@@ -269,72 +279,143 @@ struct AgentGridView: View {
 struct InstalledAgentItemView: View {
     let agent: Agent
     let openWindow: OpenWindowAction
+    let onInfoTap: () -> Void
     @State private var isHovered = false
+    @State private var isEnabled = true // Default to enabled
 
     var body: some View {
-        Button(action: {
-            openWindow(id: agent.apiID)
-        }) {
-            HStack(spacing: 16) {
-                // Icon
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+        VStack(spacing: 0) {
+            // Main content area
+            HStack(spacing: 20) {
+                // Icon and Info
+                HStack(spacing: 16) {
+                    // Icon
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
-                        .frame(width: 60, height: 60)
-                    
-                    Image(systemName: agent.icon)
-                        .font(.system(size: 24, weight: .medium))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.blue, .purple],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                            .frame(width: 64, height: 64)
+                        
+                        Image(systemName: agent.icon)
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.blue, .purple],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
-                }
-                
-                // Content
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(agent.name)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
+                    }
                     
-                    Text(agent.description)
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                    // Content
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(agent.name)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.primary)
+                        
+                        Text(agent.description)
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                        
+                        // Status indicator
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(isEnabled ? Color.green : Color.gray)
+                                .frame(width: 6, height: 6)
+                            Text(isEnabled ? "Enabled" : "Disabled")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(isEnabled ? .green : .secondary)
+                        }
+                    }
                 }
                 
                 Spacer()
                 
-                // Status indicator
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.green)
-                    Text("Installed")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.green)
+                // Controls
+                HStack(spacing: 16) {
+                    // Power Button
+                    Button(action: {
+                        isEnabled.toggle()
+                    }) {
+                        Image(systemName: isEnabled ? "power" : "power")
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundColor(isEnabled ? .green : .red)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .frame(width: 80, height: 60)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    // Manage Permissions Button
+                    Button(action: {
+                        // TODO: Show permissions management
+                    }) {
+                        Image(systemName: "gear")
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .frame(width: 80, height: 60)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    // Open Button
+                    Button(action: {
+                        openWindow(id: agent.apiID)
+                    }) {
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 28, weight: .medium))
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .frame(width: 80, height: 60)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                    )
+                            )
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 20)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(isHovered ? Color(NSColor.controlBackgroundColor).opacity(0.8) : Color.clear)
             )
-        }
-        .buttonStyle(PlainButtonStyle())
-        .onHover { hovering in
-            isHovered = hovering
+            .onTapGesture {
+                onInfoTap()
+            }
+            .onHover { hovering in
+                isHovered = hovering
+            }
         }
     }
 }

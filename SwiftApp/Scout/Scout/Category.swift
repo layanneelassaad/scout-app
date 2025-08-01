@@ -8,69 +8,12 @@
 import Foundation
 import SwiftUI
 
-struct Category: Identifiable, Codable {
+struct Category: Identifiable {
     let id: String
     let name: String
     let icon: String
     let selectedColor: Color
     let description: String
-    
-    // Custom coding keys to handle Color
-    private enum CodingKeys: String, CodingKey {
-        case id, name, icon, selectedColorName, description
-    }
-    
-    init(id: String, name: String, icon: String, selectedColor: Color, description: String) {
-        self.id = id
-        self.name = name
-        self.icon = icon
-        self.selectedColor = selectedColor
-        self.description = description
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        icon = try container.decode(String.self, forKey: .icon)
-        description = try container.decode(String.self, forKey: .description)
-        
-        let colorName = try container.decode(String.self, forKey: .selectedColorName)
-        selectedColor = Category.colorFromName(colorName)
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(name, forKey: .name)
-        try container.encode(icon, forKey: .icon)
-        try container.encode(description, forKey: .description)
-        try container.encode(Category.nameFromColor(selectedColor), forKey: .selectedColorName)
-    }
-    
-    private static func colorFromName(_ name: String) -> Color {
-        switch name {
-        case "green": return .green
-        case "yellow": return .yellow
-        case "brown": return .brown
-        case "blue": return .blue
-        case "pink": return .pink
-        case "orange": return .orange
-        default: return .blue
-        }
-    }
-    
-    private static func nameFromColor(_ color: Color) -> String {
-        switch color {
-        case .green: return "green"
-        case .yellow: return "yellow"
-        case .brown: return "brown"
-        case .blue: return "blue"
-        case .pink: return "pink"
-        case .orange: return "orange"
-        default: return "blue"
-        }
-    }
     
     static let installed = Category(
         id: "installed",

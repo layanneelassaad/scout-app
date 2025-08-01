@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Agent: Identifiable, Codable {
+struct Agent: Identifiable {
     let id: UUID
     let apiID: String
     var name: String
