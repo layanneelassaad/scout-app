@@ -10,6 +10,8 @@ import Foundation
 
 struct FileSearchView: View {
     @StateObject private var viewModel = FileSearchViewModel()
+    @State private var showingSettings = false
+    @State private var developerViewEnabled = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -27,25 +29,38 @@ struct FileSearchView: View {
                     
                     Spacer()
                     
-                    // // Connection Status
-                    // HStack(spacing: 8) {
-                    //     Circle()
-                    //         .fill(viewModel.isConnected ? Color.green : Color.red)
-                    //         .frame(width: 8, height: 8)
-                    //     Text(viewModel.connectionStatus)
-                    //         .font(.system(size: 12, weight: .medium))
-                    //         .foregroundColor(.secondary)
-                    // }
-                    // .padding(.horizontal, 12)
-                    // .padding(.vertical, 6)
-                    // .background(
-                    //     RoundedRectangle(cornerRadius: 8)
-                    //         .fill(Color(NSColor.controlBackgroundColor))
-                    //         .overlay(
-                    //             RoundedRectangle(cornerRadius: 8)
-                    //                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                    //         )
-                    // )
+                    // Settings Button
+                    Button(action: {
+                        showingSettings = true
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .help("Settings")
+                    
+                    // Connection Status (only show if developer view is enabled)
+                    if developerViewEnabled {
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(viewModel.isConnected ? Color.green : Color.red)
+                                .frame(width: 8, height: 8)
+                            Text(viewModel.connectionStatus)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                )
+                        )
+                    }
                 }
                 
                 // Search Bar
@@ -87,29 +102,31 @@ struct FileSearchView: View {
             Divider()
                 .background(Color.gray.opacity(0.3))
             
-            // Status Panels
-            VStack(spacing: 16) {
-                // Command Status
-                StatusPanel(
-                    title: "Command Status",
-                    isExpanded: $viewModel.isCommandStatusExpanded,
-                    content: viewModel.commandStatus,
-                    currentCommand: viewModel.currentCommand
-                )
+            // Status Panels (only show if developer view is enabled)
+            if developerViewEnabled {
+                VStack(spacing: 16) {
+                    // Command Status
+                    StatusPanel(
+                        title: "Command Status",
+                        isExpanded: $viewModel.isCommandStatusExpanded,
+                        content: viewModel.commandStatus,
+                        currentCommand: viewModel.commandStatus.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.last ?? "Ready"
+                    )
+                    
+                    // Raw SSE Data
+                    StatusPanel(
+                        title: "Raw SSE Data",
+                        isExpanded: .constant(false),
+                        content: viewModel.rawSSEData,
+                        currentCommand: nil
+                    )
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
                 
-                // Raw SSE Data
-                StatusPanel(
-                    title: "Raw SSE Data",
-                    isExpanded: .constant(false),
-                    content: viewModel.rawSSEData,
-                    currentCommand: nil
-                )
+                Divider()
+                    .background(Color.gray.opacity(0.3))
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            
-            Divider()
-                .background(Color.gray.opacity(0.3))
             
             // Files List
             VStack(spacing: 12) {
@@ -155,6 +172,9 @@ struct FileSearchView: View {
             }
         }
         .background(Color(NSColor.windowBackgroundColor))
+        .sheet(isPresented: $showingSettings) {
+            SettingsView(developerViewEnabled: $developerViewEnabled)
+        }
     }
 }
 
@@ -308,5 +328,40 @@ struct ModernFileRowView: View {
 struct FileSearchView_Previews: PreviewProvider {
     static var previews: some View {
         FileSearchView()
+    }
+}
+
+struct SettingsView: View {
+    @Binding var developerViewEnabled: Bool
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Text("Settings")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.primary)
+                Spacer()
+                Button("Done") {
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle("Developer View", isOn: $developerViewEnabled)
+                    .font(.system(size: 14, weight: .medium))
+                    .toggleStyle(SwitchToggleStyle())
+                
+                Text("Show connection status, command status, and raw data stream as the search agent traverses your knowledge graph.")
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(20)
+        .frame(width: 400, height: 200)
+        .background(Color(NSColor.windowBackgroundColor))
     }
 }
