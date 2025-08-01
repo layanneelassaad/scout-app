@@ -78,8 +78,8 @@ let fileSearchAgent = Agent(
     requiredToolsetIDs: [],
     dependentAgentIDs: [],
     categories: [Category.madeByScout],
-    requiredPermissions: [""],
-    recommendedPermissions: ["Full Disk Access, Knowledge Graph"],
+    requiredPermissions: ["Limited Disk Access (Select Specific)"],
+    recommendedPermissions: ["Full Disk Access", "Knowledge Graph"],
     infoPage: InfoPageContent.searchAgent,
     permissionsPage: PermissionsPage.searchAgent
 )

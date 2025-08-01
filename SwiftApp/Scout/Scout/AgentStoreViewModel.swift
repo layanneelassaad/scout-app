@@ -20,6 +20,7 @@ class AgentStoreViewModel: ObservableObject {
     @Published var isProcessing = false
     @Published var purchaseError: String?
     @Published var downloadingAgents = Set<String>()
+    @Published var hasInstalled = Set<String>()
     
     let userId = "demo-user-123" //demo user
     
@@ -49,14 +50,17 @@ class AgentStoreViewModel: ObservableObject {
     }
     
     func installAgent(_ agent: Agent) {
-        // Prevent re-installation if already purchased or downloading
+        // Prevent re-installation if already purchased, downloading, or has installed
         guard !purchasedAgentIDs.contains(agent.id.uuidString) && 
-              !downloadingAgents.contains(agent.id.uuidString) else { return }
+              !downloadingAgents.contains(agent.id.uuidString) &&
+              !hasInstalled.contains(agent.id.uuidString) else { return }
         
         downloadingAgents.insert(agent.id.uuidString)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + Double.random(in: 2.0...4.0)) {
             DispatchQueue.main.async {
+                // Mark as installed first to prevent restart
+                self.hasInstalled.insert(agent.id.uuidString)
                 self.downloadingAgents.remove(agent.id.uuidString)
                 self.purchasedAgentIDs.insert(agent.id.uuidString)
             }

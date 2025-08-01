@@ -35,7 +35,7 @@ struct Category: Identifiable {
         id: "discover",
         name: "Discover",
         icon: "sparkles",
-        selectedColor: .yellow,
+        selectedColor: .orange,
         description: "Discover new agents"
     )
     

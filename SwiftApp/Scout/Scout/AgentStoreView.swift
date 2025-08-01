@@ -43,15 +43,20 @@ struct AnimatedDownloadIndicator: View {
         
         withAnimation(.linear(duration: 0.1)) {
             animationProgress += progressIncrement
+            // STOP at 1.0 - never restart
             if animationProgress >= 1.0 {
-                animationProgress = 0
+                animationProgress = 1.0
+                return // Stop animating completely
             }
         }
         
-        // Random delay between 0.05 and 0.2 seconds
-        let randomDelay = Double.random(in: 0.05...0.2)
-        timer = Timer.scheduledTimer(withTimeInterval: randomDelay, repeats: false) { _ in
-            animateStep()
+        // Only continue if not at 1.0
+        if animationProgress < 1.0 {
+            // Random delay between 0.05 and 0.2 seconds
+            let randomDelay = Double.random(in: 0.05...0.2)
+            timer = Timer.scheduledTimer(withTimeInterval: randomDelay, repeats: false) { _ in
+                animateStep()
+            }
         }
     }
     

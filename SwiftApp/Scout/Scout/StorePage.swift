@@ -131,6 +131,7 @@ struct StorePage: View {
                     // Purchase Button
                     let isDownloading = storeVM.downloadingAgents.contains(agent.id.uuidString)
                     let isPurchased = storeVM.purchasedAgentIDs.contains(agent.id.uuidString)
+                    let hasInstalled = storeVM.hasInstalled.contains(agent.id.uuidString)
                     
                     if !isPurchased {
                         Button(action: {
@@ -143,7 +144,7 @@ struct StorePage: View {
                             }
                         }) {
                             HStack(spacing: 8) {
-                                if isDownloading {
+                                if isDownloading && !hasInstalled {
                                     ProgressView()
                                         .scaleEffect(0.8)
                                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
@@ -256,7 +257,7 @@ struct StorePage: View {
                                     .foregroundColor(.primary)
                                 
                                 if agent.requiredPermissions.isEmpty || (agent.requiredPermissions.count == 1 && agent.requiredPermissions[0].isEmpty) {
-                                    Text("None required")
+                                    Text("No permissions required")
                                         .font(.system(size: 14, weight: .regular))
                                         .foregroundColor(.secondary)
                                 } else {
@@ -281,7 +282,7 @@ struct StorePage: View {
                                     .foregroundColor(.primary)
                                 
                                 if agent.recommendedPermissions.isEmpty {
-                                    Text("None recommended")
+                                    Text("No permissions recommended")
                                         .font(.system(size: 14, weight: .regular))
                                         .foregroundColor(.secondary)
                                 } else {
