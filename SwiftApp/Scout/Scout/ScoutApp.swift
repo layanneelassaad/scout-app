@@ -15,7 +15,10 @@ struct ScoutApp: App {
                 .onOpenURL { url in
                     storeVM.handleCallback(url: url)
                 }
+                .preferredColorScheme(.dark)
         }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
         .commands {
             CommandGroup(after: .appInfo) {
                 Divider()
@@ -28,10 +31,13 @@ struct ScoutApp: App {
 
         Window("File Search", id: "file-search") {
             FileSearchView()
-                .frame(minWidth: 600, minHeight: 400)
+                .frame(minWidth: 800, minHeight: 600)
+                .preferredColorScheme(.dark)
                 .onAppear {
                     print("FileSearchView loaded")
                 }
         }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
     }
 }

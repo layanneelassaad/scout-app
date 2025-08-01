@@ -4,46 +4,105 @@ struct ContentView: View {
     @StateObject private var viewModel = ChatViewModel()
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Scout Knowledge Graph Search")
-                .font(.title2)
-                .padding(.top)
-
+        VStack(spacing: 0) {
+            // Header
+            VStack(spacing: 8) {
+                Text("Scout Knowledge Graph")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(.primary)
+                
+                Text("Intelligent file search and analysis")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.top, 20)
+            .padding(.bottom, 16)
+            
             Divider()
+                .background(Color.gray.opacity(0.3))
 
+            // Messages
             ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
+                    LazyVStack(alignment: .leading, spacing: 12) {
                         ForEach(viewModel.messages.indices, id: \.self) { index in
-                            Text(viewModel.messages[index])
-                                .font(.system(.body, design: .monospaced))
-                                .padding(10)
-                                .background(Color.gray.opacity(0.15))
-                                .cornerRadius(8)
+                            MessageBubble(message: viewModel.messages[index])
                                 .id(index)
                         }
                     }
-                    .padding()
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
                 }
-                .onChange(of: viewModel.messages.count) { _ in
-                    withAnimation {
-                        proxy.scrollTo(viewModel.messages.count - 1, anchor: .bottom)
+                .onChange(of: viewModel.messages.count) { oldValue, newValue in
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        proxy.scrollTo(newValue - 1, anchor: .bottom)
                     }
                 }
             }
 
             Divider()
+                .background(Color.gray.opacity(0.3))
 
-            Button("Start Listening") {
-             
-                viewModel.connectToEventStream(sessionID: "a58badca-997c-49a6-a9ba-81c62c316c2d")
+            // Control Panel
+            VStack(spacing: 16) {
+                Button(action: {
+                    viewModel.connectToEventStream(sessionID: "a58badca-997c-49a6-a9ba-81c62c316c2d")
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "play.circle.fill")
+                            .font(.system(size: 16, weight: .medium))
+                        Text("Start Listening")
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.blue, Color.blue.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(12)
+                    .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .scaleEffect(viewModel.isConnected ? 0.95 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: viewModel.isConnected)
             }
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
         .frame(minWidth: 600, minHeight: 600)
-        .padding()
+        .background(Color(NSColor.windowBackgroundColor))
+    }
+}
+
+struct MessageBubble: View {
+    let message: String
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(message)
+                    .font(.system(.body, design: .monospaced))
+                    .foregroundColor(.primary)
+                    .textSelection(.enabled)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(NSColor.controlBackgroundColor))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+            )
+            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+            
+            Spacer()
+        }
     }
 }

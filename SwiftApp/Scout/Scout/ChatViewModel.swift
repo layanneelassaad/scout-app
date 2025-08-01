@@ -6,10 +6,13 @@ struct ChatEvent: Codable {
     let entity: String
     let description: String
 }
+
 class ChatViewModel: ObservableObject {
     @Published var messages: [String] = []
+    @Published var isConnected = false
 
     private var sseClient: SSEClient?
+    private var cancellables = Set<AnyCancellable>()
 
     func connectToEventStream(sessionID: String) {
         print("Connecting to event stream...")
@@ -21,9 +24,14 @@ class ChatViewModel: ObservableObject {
         }
 
         sseClient?.connect(sessionID: sessionID)
+        
+        // Subscribe to connection status from SSEClient if it has one
+        // For now, we'll set it manually since SSEClient doesn't expose isConnected
+        isConnected = true
     }
 
     func stopListening() {
         sseClient?.disconnect()
+        isConnected = false
     }
 }
