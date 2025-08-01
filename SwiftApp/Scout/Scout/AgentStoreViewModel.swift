@@ -57,7 +57,6 @@ class AgentStoreViewModel: ObservableObject {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + Double.random(in: 2.0...4.0)) {
             DispatchQueue.main.async {
-                // Instantly complete the installation - no delay, no restart
                 self.downloadingAgents.remove(agent.id.uuidString)
                 self.purchasedAgentIDs.insert(agent.id.uuidString)
             }

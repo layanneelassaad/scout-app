@@ -79,7 +79,7 @@ let fileSearchAgent = Agent(
     dependentAgentIDs: [],
     categories: [Category.madeByScout],
     requiredPermissions: [""],
-    recommendedPermissions: ["Full Disk Access"],
+    recommendedPermissions: ["Full Disk Access, Knowledge Graph"],
     infoPage: InfoPageContent.searchAgent,
     permissionsPage: PermissionsPage.searchAgent
 )

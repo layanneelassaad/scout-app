@@ -135,9 +135,10 @@ struct AgentStoreView: View {
             VStack(spacing: 0) {
                 // Content header
                 HStack {
-                    Text(categories[selectedView].name)
+                    Text(selectedView == 0 ? "Agent Manager" : categories[selectedView].name)
                         .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.primary)
+                    
                     Spacer()
                 }
                 .padding(.horizontal, 32)
@@ -313,7 +314,7 @@ struct InstalledAgentItemView: View {
     let onInfoTap: () -> Void
     let onSettingsTap: () -> Void
     @State private var isHovered = false
-    @State private var isEnabled = true // Default to enabled
+    @State private var isEnabled = false // Default to disabled
 
     var body: some View {
         VStack(spacing: 0) {
@@ -420,7 +421,7 @@ struct InstalledAgentItemView: View {
                     }) {
                         Image(systemName: "play.fill")
                             .font(.system(size: 28, weight: .medium))
-                            .foregroundColor(.blue)
+                            .foregroundColor(isEnabled ? .blue : .gray)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
                             .frame(width: 80, height: 60)
@@ -434,6 +435,7 @@ struct InstalledAgentItemView: View {
                             )
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .disabled(!isEnabled)
                 }
             }
             .padding(.horizontal, 24)
