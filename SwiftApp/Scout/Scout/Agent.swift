@@ -19,6 +19,8 @@ struct Agent: Identifiable, Codable {
     var requiredToolsetIDs: [UUID]
     var dependentAgentIDs: [UUID]
     var categories: [String]
+    var requiredPermissions: [String]
+    var recommendedPermissions: [String]
 
     var isFree: Bool {
         return price == 0.0

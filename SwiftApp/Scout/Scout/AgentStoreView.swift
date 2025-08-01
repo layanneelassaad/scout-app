@@ -20,16 +20,18 @@ struct AgentStoreView: View {
     // App Store-style sections
     private let sections = [
         ("Installed Scouts", "checkmark.circle.fill", 0),
-        ("Discover", "sparkles", 1),
-        ("Productivity", "bolt.fill", 2),
-        ("Development", "hammer.fill", 3),
-        ("Utilities", "wrench.and.screwdriver.fill", 4)
+        ("Made by Scout", "sparkles", 1),
+        ("Discover", "sparkles", 2),
+        ("Productivity", "bolt.fill", 3),
+        ("Development", "hammer.fill", 4),
+        ("Utilities", "wrench.and.screwdriver.fill", 5)
     ]
     
     private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
         let sectionName = sections[sectionIndex].0.lowercased()
         let categoryMap = [
             "installed scouts": "installed",
+            "made by scout": "made by scout",
             "discover": "discover", 
             "productivity": "productivity",
             "development": "development",
@@ -283,6 +285,7 @@ struct StoreItemView: View {
     @EnvironmentObject var storeVM: AgentStoreViewModel
     let agent: Agent
     @State private var isHovered = false
+    @State private var showingPermissionsWarning = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -349,7 +352,7 @@ struct StoreItemView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 16, weight: .medium))
-                    Text("Purchased")
+                    Text("Installed")
                         .font(.system(size: 14, weight: .medium))
                 }
                 .foregroundColor(.green)
@@ -360,12 +363,14 @@ struct StoreItemView: View {
                         .fill(Color.green.opacity(0.2))
                 )
             } else {
-                Button(action: { storeVM.buy(agent: agent) }) {
+                Button(action: { 
+                    showingPermissionsWarning = true
+                }) {
                     HStack(spacing: 8) {
-                        if agent.price == 0 {
+                        if agent.isFree {
                             Image(systemName: "arrow.down.circle.fill")
                                 .font(.system(size: 16, weight: .medium))
-                            Text("Free")
+                            Text("Get")
                                 .font(.system(size: 14, weight: .medium))
                         } else {
                             Image(systemName: "cart.fill")
@@ -405,6 +410,82 @@ struct StoreItemView: View {
         .animation(.easeInOut(duration: 0.3), value: isHovered)
         .onHover { isHovered = $0 }
         .frame(minWidth: 260)
+        .sheet(isPresented: $showingPermissionsWarning) {
+            PermissionsWarningView(agent: agent)
+        }
+    }
+}
+
+struct PermissionsWarningView: View {
+    let agent: Agent
+    @EnvironmentObject var storeVM: AgentStoreViewModel
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            // Header
+            VStack(spacing: 8) {
+                Text("WARNING")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.red)
+                
+                Text("The following permissions are required and the following are strongly recommended for top functionality:")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            // Required Permissions
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Required Permissions:")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.red)
+                
+                ForEach(agent.requiredPermissions, id: \.self) { permission in
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.red)
+                        Text(permission)
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            // Recommended Permissions
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Recommended Permissions:")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.orange)
+                
+                ForEach(agent.recommendedPermissions, id: \.self) { permission in
+                    HStack(spacing: 8) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundColor(.orange)
+                        Text(permission)
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            // Action Buttons
+            HStack(spacing: 16) {
+                Button("Cancel") {
+                    dismiss()
+                }
+                .buttonStyle(.bordered)
+                
+                Button(agent.isFree ? "Install" : "Buy Agent") {
+                    storeVM.buy(agent: agent)
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(32)
+        .frame(width: 500, height: 400)
+        .background(Color(NSColor.windowBackgroundColor))
     }
 }
 
