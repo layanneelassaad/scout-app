@@ -74,6 +74,22 @@ struct KnowledgeGraphControlPanel: View {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(Color(NSColor.controlBackgroundColor))
                 )
+                
+                // Visualize Button (only shown when Graph Visualizer is enabled and KG is enabled)
+                if viewModel.isGraphVisualizerEnabled && viewModel.isKnowledgeGraphEnabled && !viewModel.isIndexing {
+                    HStack {
+                        Spacer()
+                        
+                        Button("Visualize") {
+                            viewModel.showingVisualization = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        
+                        Spacer()
+                    }
+                    .padding(.top, 8)
+                }
             }
             
             // Knowledge Graph Settings (only shown when enabled)
@@ -107,6 +123,29 @@ struct KnowledgeGraphControlPanel: View {
                                 .fill(Color(NSColor.controlBackgroundColor))
                         )
                         
+                        // Graph Visualizer
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Graph Visualizer")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.primary)
+                                Text("Visualize your knowledge graph connections")
+                                    .font(.system(size: 14, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Toggle("", isOn: $viewModel.isGraphVisualizerEnabled)
+                                .toggleStyle(SwitchToggleStyle())
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                        )
+                        
                         // Semantic Search
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
@@ -122,6 +161,7 @@ struct KnowledgeGraphControlPanel: View {
                             
                             Toggle("", isOn: .constant(false))
                                 .disabled(!viewModel.isAdvancedModeEnabled)
+                                .toggleStyle(SwitchToggleStyle())
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -145,6 +185,7 @@ struct KnowledgeGraphControlPanel: View {
                             
                             Toggle("", isOn: .constant(false))
                                 .disabled(!viewModel.isAdvancedModeEnabled)
+                                .toggleStyle(SwitchToggleStyle())
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -168,6 +209,7 @@ struct KnowledgeGraphControlPanel: View {
                             
                             Toggle("", isOn: .constant(false))
                                 .disabled(!viewModel.isAdvancedModeEnabled)
+                                .toggleStyle(SwitchToggleStyle())
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -182,7 +224,7 @@ struct KnowledgeGraphControlPanel: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Integrations")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.secondary)
                     
                     VStack(spacing: 12) {
                         // Google Drive
@@ -190,7 +232,7 @@ struct KnowledgeGraphControlPanel: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Google Drive")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -200,6 +242,7 @@ struct KnowledgeGraphControlPanel: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
+                            .disabled(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -213,7 +256,7 @@ struct KnowledgeGraphControlPanel: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Gmail")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -223,6 +266,7 @@ struct KnowledgeGraphControlPanel: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
+                            .disabled(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -236,7 +280,7 @@ struct KnowledgeGraphControlPanel: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Slack")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -246,6 +290,7 @@ struct KnowledgeGraphControlPanel: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
+                            .disabled(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -259,7 +304,7 @@ struct KnowledgeGraphControlPanel: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Notion")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -269,6 +314,7 @@ struct KnowledgeGraphControlPanel: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
+                            .disabled(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -282,7 +328,7 @@ struct KnowledgeGraphControlPanel: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Linear")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -292,6 +338,7 @@ struct KnowledgeGraphControlPanel: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
+                            .disabled(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -305,7 +352,7 @@ struct KnowledgeGraphControlPanel: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Jira")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -315,6 +362,7 @@ struct KnowledgeGraphControlPanel: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
+                            .disabled(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -328,7 +376,7 @@ struct KnowledgeGraphControlPanel: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Git")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -338,6 +386,7 @@ struct KnowledgeGraphControlPanel: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
+                            .disabled(true)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -371,6 +420,9 @@ struct KnowledgeGraphControlPanel: View {
         } message: {
             Text("Your personal profile is ready!")
         }
+        .sheet(isPresented: $viewModel.showingVisualization) {
+            VisualizationView()
+        }
         .fileImporter(
             isPresented: $viewModel.showingFilePicker,
             allowedContentTypes: [.folder],
@@ -384,5 +436,50 @@ struct KnowledgeGraphControlPanel: View {
                 print("File picker error: \(error.localizedDescription)")
             }
         }
+    }
+}
+
+struct VisualizationView: View {
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Header
+            HStack {
+                Button("Close") {
+                    dismiss()
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                
+                Spacer()
+                
+                Text("Knowledge Graph Visualization")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Color.clear.frame(width: 60, height: 1)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .background(Color(NSColor.controlBackgroundColor))
+            
+            Divider()
+                .background(Color.gray.opacity(0.3))
+            
+            // Image
+            ScrollView([.horizontal, .vertical]) {
+                Image("kg_visualization_dot")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(20)
+            }
+            .background(Color(NSColor.windowBackgroundColor))
+        }
+        .frame(minWidth: 800, minHeight: 600)
+        .background(Color(NSColor.windowBackgroundColor))
     }
 } 
