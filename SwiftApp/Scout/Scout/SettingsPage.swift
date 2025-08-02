@@ -117,54 +117,36 @@ struct PermissionsView: View {
                         )
                 } else {
                     ForEach(validRequiredPermissions, id: \.self) { permission in
-                        HStack(spacing: 12) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.red)
-                                .font(.system(size: 14, weight: .medium))
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(permission)
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.primary)
-                                Text("Required for \(agent.name) to function properly")
-                                    .font(.system(size: 12, weight: .regular))
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            Spacer()
-                            
-                            if grantedPermissions.contains(permission) {
-                                HStack(spacing: 8) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
-                                            .font(.system(size: 12, weight: .medium))
-                                        Text("Granted")
-                                            .font(.system(size: 12, weight: .medium))
-                                            .foregroundColor(.green)
-                                    }
-                                    
-                                    Button("Revoke") {
-                                        grantedPermissions.remove(permission)
-                                    }
-                                    .buttonStyle(.bordered)
-                                    .controlSize(.small)
+                        if !grantedPermissions.contains(permission) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "exclamationmark.triangle.fill")
                                     .foregroundColor(.red)
+                                    .font(.system(size: 14, weight: .medium))
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(permission)
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.primary)
+                                    Text("Required for \(agent.name) to function properly")
+                                        .font(.system(size: 12, weight: .regular))
+                                        .foregroundColor(.secondary)
                                 }
-                            } else {
+                                
+                                Spacer()
+                                
                                 Button("Grant") {
                                     grantedPermissions.insert(permission)
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .controlSize(.small)
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(NSColor.controlBackgroundColor))
-                        )
                     }
                 }
             }
@@ -187,41 +169,23 @@ struct PermissionsView: View {
                         )
                 } else {
                     ForEach(agent.recommendedPermissions, id: \.self) { permission in
-                        HStack(spacing: 12) {
-                            Image(systemName: "info.circle.fill")
-                                .foregroundColor(.orange)
-                                .font(.system(size: 14, weight: .medium))
-                            
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(permission)
+                        if !grantedPermissions.contains(permission) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "info.circle.fill")
+                                    .foregroundColor(.orange)
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.primary)
-                                Text("Recommended for enhanced functionality")
-                                    .font(.system(size: 12, weight: .regular))
-                                    .foregroundColor(.secondary)
-                            }
-                            
-                            Spacer()
-                            
-                            if grantedPermissions.contains(permission) {
-                                HStack(spacing: 8) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.green)
-                                            .font(.system(size: 12, weight: .medium))
-                                        Text("Granted")
-                                            .font(.system(size: 12, weight: .medium))
-                                            .foregroundColor(.green)
-                                    }
-                                    
-                                    Button("Revoke") {
-                                        grantedPermissions.remove(permission)
-                                    }
-                                    .buttonStyle(.bordered)
-                                    .controlSize(.small)
-                                    .foregroundColor(.red)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(permission)
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.primary)
+                                    Text("Recommended for enhanced functionality")
+                                        .font(.system(size: 12, weight: .regular))
+                                        .foregroundColor(.secondary)
                                 }
-                            } else {
+                                
+                                Spacer()
+                                
                                 Button("Grant") {
                                     if permission == "Knowledge Graph" {
                                         showingKnowledgeGraphConfirmation = true
@@ -232,6 +196,47 @@ struct PermissionsView: View {
                                 .buttonStyle(.bordered)
                                 .controlSize(.small)
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
+                        }
+                    }
+                }
+            }
+            
+            // Granted Permissions
+            if !grantedPermissions.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Granted Permissions")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
+                    ForEach(Array(grantedPermissions), id: \.self) { permission in
+                        HStack(spacing: 12) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                                .font(.system(size: 14, weight: .medium))
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(permission)
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(.primary)
+                                Text("Permission granted")
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Button("Revoke") {
+                                grantedPermissions.remove(permission)
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                            .foregroundColor(.red)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
