@@ -93,6 +93,9 @@ struct AgentStoreView: View {
                 storeVM.purchasedAgentIDs.contains(agent.id.uuidString) || 
                 storeVM.downloadingAgents.contains(agent.id.uuidString)
             }
+        } else if category.id == "knowledge-graph" {
+            // Return empty array for knowledge graph - it shows a control panel instead
+            return []
         } else {
             // Show agents by category
             return allAgents.filter { agent in
@@ -219,6 +222,8 @@ struct AgentStoreView: View {
                                 .background(Color.gray.opacity(0.3))
                         }
                     }
+                } else if categories[selectedView].id == "knowledge-graph" {
+                    KnowledgeGraphControlPanel()
                 } else {
                     LazyVStack(spacing: 0) {
                         ForEach(agentsForSection(selectedView).filter {
@@ -724,6 +729,8 @@ struct ModernSearchBar: View {
         }
     }
 }
+
+
 
 struct AgentStoreView_Previews: PreviewProvider {
     static var previews: some View {

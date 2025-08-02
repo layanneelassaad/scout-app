@@ -59,9 +59,17 @@ struct Category: Identifiable {
         id: "utilities",
         name: "Utilities",
         icon: "wrench.and.screwdriver.fill",
-        selectedColor: .brown,
-        description: "Utility tools"
+        selectedColor: .orange,
+        description: "Utility and helper agents"
     )
     
-    static let allCategories = [installed, madeByScout, discover, productivity, development, utilities]
+    static let knowledgeGraph = Category(
+        id: "knowledge-graph",
+        name: "Personal Profile",
+        icon: "brain.head.profile",
+        selectedColor: .purple,
+        description: "Knowledge graph control panel"
+    )
+    
+    static let allCategories = [installed, knowledgeGraph, madeByScout, discover, productivity, development, utilities]
 } 
