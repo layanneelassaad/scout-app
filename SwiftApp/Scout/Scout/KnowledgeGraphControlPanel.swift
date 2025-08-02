@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct KnowledgeGraphControlPanel: View {
-    @State private var isKnowledgeGraphEnabled = false
-    @State private var isAdvancedModeEnabled = false
-    @State private var showingEnableConfirmation = false
-    @State private var showingFilePicker = false
+    @StateObject private var viewModel = KnowledgeGraphViewModel()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -41,13 +38,31 @@ struct KnowledgeGraphControlPanel: View {
                     
                     Spacer()
                     
-                    if isKnowledgeGraphEnabled {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                            .font(.system(size: 20, weight: .medium))
+                    if viewModel.isKnowledgeGraphEnabled && !viewModel.isIndexing {
+                        HStack(spacing: 12) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                                .font(.system(size: 20, weight: .medium))
+                            
+                            Button("Revoke") {
+                                viewModel.revokeKnowledgeGraph()
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                            .foregroundColor(.red)
+                        }
+                    } else if viewModel.isIndexing {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                            Text("Indexing...")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.blue)
+                        }
                     } else {
                         Button("Enable") {
-                            showingEnableConfirmation = true
+                            viewModel.showingEnableConfirmation = true
                         }
                         .buttonStyle(.borderedProminent)
                         .controlSize(.small)
@@ -62,7 +77,7 @@ struct KnowledgeGraphControlPanel: View {
             }
             
             // Knowledge Graph Settings (only shown when enabled)
-            if isKnowledgeGraphEnabled {
+            if viewModel.isKnowledgeGraphEnabled && !viewModel.isIndexing {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Knowledge Graph Settings")
                         .font(.system(size: 18, weight: .semibold))
@@ -71,22 +86,18 @@ struct KnowledgeGraphControlPanel: View {
                     VStack(spacing: 12) {
                         // Advanced Mode Toggle
                         HStack {
-                            Image(systemName: "brain.head.profile")
-                                .foregroundColor(.purple)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Advanced Mode")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Enable advanced knowledge graph features")
+                                Text("Enable Advanced Mode, giving you more granular control over your knowledge graph")
                                     .font(.system(size: 14, weight: .regular))
                                     .foregroundColor(.secondary)
                             }
                             
                             Spacer()
                             
-                            Toggle("", isOn: $isAdvancedModeEnabled)
+                            Toggle("", isOn: $viewModel.isAdvancedModeEnabled)
                                 .toggleStyle(SwitchToggleStyle())
                         }
                         .padding(.horizontal, 16)
@@ -98,23 +109,19 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Semantic Search
                         HStack {
-                            Image(systemName: "magnifyingglass.circle")
-                                .foregroundColor(isAdvancedModeEnabled ? .purple : .gray)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Semantic Search")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(isAdvancedModeEnabled ? .primary : .secondary)
+                                    .foregroundColor(viewModel.isAdvancedModeEnabled ? .primary : .secondary)
                                 Text("Search through your knowledge graph using natural language")
                                     .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(isAdvancedModeEnabled ? .secondary : .gray)
+                                    .foregroundColor(viewModel.isAdvancedModeEnabled ? .secondary : .gray)
                             }
                             
                             Spacer()
                             
                             Toggle("", isOn: .constant(false))
-                                .disabled(!isAdvancedModeEnabled)
+                                .disabled(!viewModel.isAdvancedModeEnabled)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -125,23 +132,19 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Knowledge Connections
                         HStack {
-                            Image(systemName: "network")
-                                .foregroundColor(isAdvancedModeEnabled ? .purple : .gray)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Knowledge Connections")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(isAdvancedModeEnabled ? .primary : .secondary)
+                                    .foregroundColor(viewModel.isAdvancedModeEnabled ? .primary : .secondary)
                                 Text("Discover connections between different pieces of knowledge")
                                     .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(isAdvancedModeEnabled ? .secondary : .gray)
+                                    .foregroundColor(viewModel.isAdvancedModeEnabled ? .secondary : .gray)
                             }
                             
                             Spacer()
                             
                             Toggle("", isOn: .constant(false))
-                                .disabled(!isAdvancedModeEnabled)
+                                .disabled(!viewModel.isAdvancedModeEnabled)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -152,23 +155,19 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Learning Analytics
                         HStack {
-                            Image(systemName: "chart.line.uptrend.xyaxis")
-                                .foregroundColor(isAdvancedModeEnabled ? .purple : .gray)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Learning Analytics")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(isAdvancedModeEnabled ? .primary : .secondary)
+                                    .foregroundColor(viewModel.isAdvancedModeEnabled ? .primary : .secondary)
                                 Text("Track and analyze your knowledge growth patterns")
                                     .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(isAdvancedModeEnabled ? .secondary : .gray)
+                                    .foregroundColor(viewModel.isAdvancedModeEnabled ? .secondary : .gray)
                             }
                             
                             Spacer()
                             
                             Toggle("", isOn: .constant(false))
-                                .disabled(!isAdvancedModeEnabled)
+                                .disabled(!viewModel.isAdvancedModeEnabled)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -188,17 +187,10 @@ struct KnowledgeGraphControlPanel: View {
                     VStack(spacing: 12) {
                         // Google Drive
                         HStack {
-                            Image(systemName: "externaldrive.fill")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Google Drive")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Sync documents and files from Google Drive")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -218,17 +210,10 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Gmail
                         HStack {
-                            Image(systemName: "envelope.fill")
-                                .foregroundColor(.red)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Gmail")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Import emails and conversations")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -248,17 +233,10 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Slack
                         HStack {
-                            Image(systemName: "message.fill")
-                                .foregroundColor(.purple)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Slack")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Import messages and conversations")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -278,17 +256,10 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Notion
                         HStack {
-                            Image(systemName: "doc.text.fill")
-                                .foregroundColor(.black)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Notion")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Import notes and documents")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -308,17 +279,10 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Linear
                         HStack {
-                            Image(systemName: "list.bullet.clipboard.fill")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Linear")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Import issues and project data")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -338,17 +302,10 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Jira
                         HStack {
-                            Image(systemName: "ticket.fill")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Jira")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Import issues and project management data")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -368,17 +325,10 @@ struct KnowledgeGraphControlPanel: View {
                         
                         // Git
                         HStack {
-                            Image(systemName: "git.branch")
-                                .foregroundColor(.orange)
-                                .font(.system(size: 16, weight: .medium))
-                            
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Git")
                                     .font(.system(size: 16, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text("Import code repositories and commits")
-                                    .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.secondary)
                             }
                             
                             Spacer()
@@ -400,26 +350,36 @@ struct KnowledgeGraphControlPanel: View {
             }
         }
         .padding(32)
-        .alert("Enable Knowledge Graph", isPresented: $showingEnableConfirmation) {
+        .alert("Enable Knowledge Graph", isPresented: $viewModel.showingEnableConfirmation) {
             Button("Cancel", role: .cancel) { }
             Button("Enable") {
-                isKnowledgeGraphEnabled = true
+                viewModel.enableKnowledgeGraph()
             }
             Button("Enable for Specific Locations...") {
-                showingFilePicker = true
+                viewModel.showingFilePicker = true
             }
         } message: {
             Text("Are you sure you want to enable your knowledge graph? This will allow the system to access your complete knowledge profile.")
         }
+        .alert("Indexing Files", isPresented: $viewModel.showingIndexingDialog) {
+            // No buttons for this alert
+        } message: {
+            Text("Knowledge graph is currently indexing your files. This may take a while.")
+        }
+        .alert("Indexing Complete", isPresented: $viewModel.showingIndexingComplete) {
+            Button("OK") { }
+        } message: {
+            Text("Your personal profile is ready!")
+        }
         .fileImporter(
-            isPresented: $showingFilePicker,
+            isPresented: $viewModel.showingFilePicker,
             allowedContentTypes: [.folder],
             allowsMultipleSelection: true
         ) { result in
             switch result {
             case .success(let urls):
                 // Handle selected folders for specific locations
-                isKnowledgeGraphEnabled = true
+                viewModel.enableKnowledgeGraph()
             case .failure(let error):
                 print("File picker error: \(error.localizedDescription)")
             }
