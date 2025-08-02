@@ -100,13 +100,56 @@ struct PermissionsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             // Required Permissions
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Required Permissions")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
-                
-                let validRequiredPermissions = agent.requiredPermissions.filter { !$0.isEmpty }
-                if validRequiredPermissions.isEmpty {
+            let validRequiredPermissions = agent.requiredPermissions.filter { !$0.isEmpty }
+            let ungrantedRequiredPermissions = validRequiredPermissions.filter { !grantedPermissions.contains($0) }
+            
+            if !ungrantedRequiredPermissions.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Required Permissions")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
+                    ForEach(ungrantedRequiredPermissions, id: \.self) { permission in
+                        HStack(spacing: 12) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                                .font(.system(size: 14, weight: .medium))
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(permission)
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(.primary)
+                                Text("Required for \(agent.name) to function properly")
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Button("Grant") {
+                                if permission == "Limited Disk Access (Select Specific Folders)" {
+                                    showingFilePicker = true
+                                } else {
+                                    grantedPermissions.insert(permission)
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.small)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                        )
+                    }
+                }
+            } else if validRequiredPermissions.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Required Permissions")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
                     Text("No permissions required")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.secondary)
@@ -116,53 +159,59 @@ struct PermissionsView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color(NSColor.controlBackgroundColor))
                         )
-                } else {
-                    ForEach(validRequiredPermissions, id: \.self) { permission in
-                        if !grantedPermissions.contains(permission) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundColor(.red)
-                                    .font(.system(size: 14, weight: .medium))
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(permission)
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.primary)
-                                    Text("Required for \(agent.name) to function properly")
-                                        .font(.system(size: 12, weight: .regular))
-                                        .foregroundColor(.secondary)
-                                }
-                                
-                                Spacer()
-                                
-                                Button("Grant") {
-                                    if permission == "Limited Disk Access (Select Specific)" {
-                                        showingFilePicker = true
-                                    } else {
-                                        grantedPermissions.insert(permission)
-                                    }
-                                }
-                                .buttonStyle(.borderedProminent)
-                                .controlSize(.small)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color(NSColor.controlBackgroundColor))
-                            )
-                        }
-                    }
                 }
             }
             
             // Recommended Permissions
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Recommended Permissions")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
-                
-                if agent.recommendedPermissions.isEmpty {
+            let ungrantedRecommendedPermissions = agent.recommendedPermissions.filter { !grantedPermissions.contains($0) }
+            
+            if !ungrantedRecommendedPermissions.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Recommended Permissions")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
+                    ForEach(ungrantedRecommendedPermissions, id: \.self) { permission in
+                        HStack(spacing: 12) {
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.orange)
+                                .font(.system(size: 14, weight: .medium))
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(permission)
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(.primary)
+                                Text(permission == "Knowledge Graph" ? "Recommended for semantic search" : "Recommended for full functionality")
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Button("Grant") {
+                                if permission == "Knowledge Graph" {
+                                    showingKnowledgeGraphConfirmation = true
+                                } else {
+                                    grantedPermissions.insert(permission)
+                                }
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                        )
+                    }
+                }
+            } else if agent.recommendedPermissions.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Recommended Permissions")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
                     Text("No permissions recommended")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.secondary)
@@ -172,43 +221,6 @@ struct PermissionsView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color(NSColor.controlBackgroundColor))
                         )
-                } else {
-                    ForEach(agent.recommendedPermissions, id: \.self) { permission in
-                        if !grantedPermissions.contains(permission) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "info.circle.fill")
-                                    .foregroundColor(.orange)
-                                    .font(.system(size: 14, weight: .medium))
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(permission)
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.primary)
-                                    Text(permission == "Knowledge Graph" ? "Recommended for semantic search" : "Recommended for full functionality")
-                                        .font(.system(size: 12, weight: .regular))
-                                        .foregroundColor(.secondary)
-                                }
-                                
-                                Spacer()
-                                
-                                Button("Grant") {
-                                    if permission == "Knowledge Graph" {
-                                        showingKnowledgeGraphConfirmation = true
-                                    } else {
-                                        grantedPermissions.insert(permission)
-                                    }
-                                }
-                                .buttonStyle(.bordered)
-                                .controlSize(.small)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color(NSColor.controlBackgroundColor))
-                            )
-                        }
-                    }
                 }
             }
             
@@ -236,12 +248,23 @@ struct PermissionsView: View {
                             
                             Spacer()
                             
-                            Button("Revoke") {
-                                grantedPermissions.remove(permission)
+                            HStack(spacing: 8) {
+                                if permission == "Limited Disk Access (Select Specific Folders)" {
+                                    Button("Details") {
+                                        // TODO: Show details of selected folders
+                                    }
+                                    .buttonStyle(.bordered)
+                                    .controlSize(.small)
+                                    .foregroundColor(.blue)
+                                }
+                                
+                                Button("Revoke") {
+                                    grantedPermissions.remove(permission)
+                                }
+                                .buttonStyle(.bordered)
+                                .controlSize(.small)
+                                .foregroundColor(.red)
                             }
-                            .buttonStyle(.bordered)
-                            .controlSize(.small)
-                            .foregroundColor(.red)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -273,7 +296,7 @@ struct PermissionsView: View {
             switch result {
             case .success(let urls):
                 // Handle selected folders
-                grantedPermissions.insert("Limited Disk Access (Select Specific)")
+                grantedPermissions.insert("Limited Disk Access")
             case .failure(let error):
                 print("File picker error: \(error.localizedDescription)")
             }
