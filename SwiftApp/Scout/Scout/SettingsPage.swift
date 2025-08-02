@@ -94,6 +94,7 @@ struct SettingsPage: View {
 struct PermissionsView: View {
     let agent: Agent
     @State private var showingKnowledgeGraphConfirmation = false
+    @State private var showingFilePicker = false
     @State private var grantedPermissions: Set<String> = []
     
     var body: some View {
@@ -135,7 +136,11 @@ struct PermissionsView: View {
                                 Spacer()
                                 
                                 Button("Grant") {
-                                    grantedPermissions.insert(permission)
+                                    if permission == "Limited Disk Access (Select Specific)" {
+                                        showingFilePicker = true
+                                    } else {
+                                        grantedPermissions.insert(permission)
+                                    }
                                 }
                                 .buttonStyle(.borderedProminent)
                                 .controlSize(.small)
@@ -259,6 +264,19 @@ struct PermissionsView: View {
             }
         } message: {
             Text("Are you sure you want to allow this agent to access your complete knowledge profile?")
+        }
+        .fileImporter(
+            isPresented: $showingFilePicker,
+            allowedContentTypes: [.folder],
+            allowsMultipleSelection: true
+        ) { result in
+            switch result {
+            case .success(let urls):
+                // Handle selected folders
+                grantedPermissions.insert("Limited Disk Access (Select Specific)")
+            case .failure(let error):
+                print("File picker error: \(error.localizedDescription)")
+            }
         }
     }
 }
