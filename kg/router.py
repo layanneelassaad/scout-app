@@ -289,8 +289,8 @@ async def get_kg_stats_api():
             return JSONResponse({
                 'success': True,
                 'data': {
-                    'total_entities': graph_stats.get('num_nodes', 0),
-                    'total_relationships': graph_stats.get('num_edges', 0),
+                    'total_entities': graph_stats.get('num_entities', 0),
+                    'total_relationships': graph_stats.get('num_relationships', 0),
                     'indexed_files': embedding_stats.get('num_embeddings', 0),
                     'graph_stats': graph_stats,
                     'embedding_stats': embedding_stats

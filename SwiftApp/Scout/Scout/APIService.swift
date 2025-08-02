@@ -256,7 +256,7 @@ final class APIService: NSObject, URLSessionDataDelegate {
     private func processBuffer() {
         // SSE messages are separated by double newlines.
         // The server uses CRLF line endings, so the separator is `\r\n\r\n`.
-        let separator = "\r\n\r\n".data(using: .utf8)!
+        let separator = "\n\n".data(using: .utf8)!
         while let range = dataBuffer.range(of: separator) {
             let messageData = dataBuffer.subdata(in: 0..<range.lowerBound)
             dataBuffer.removeSubrange(0..<range.upperBound)
@@ -321,27 +321,36 @@ final class APIService: NSObject, URLSessionDataDelegate {
                 
             case "command_result":
        
-                if let result = payload.result {
-                 
-                    
-                    // Handle search results - the backend sends results in the 'result' field
-                    if let entity = result.entity, let type = result.type {
-                     
-                        
-                        // Create FileInfo from the search result
+                if let result = payload.result,
+                    let entity = result.entity,
+                    let type   = result.type
+                    {
                         let fileInfo = FileInfo(
                             path: entity,
                             score: result.score,
                             type: type,
                             description: result.description
                         )
+                    
+                    self.searchResults.append(fileInfo)
+                    self.newFile.send(fileInfo)
+                    self.currentCommand.send("Found: \(entity)")
+                    
+                 
+                    
+                    // Handle search results - the backend sends results in the 'result' field
+                    
+                     
+                        
+                        // Create FileInfo from the search result
+                        
                         
                      
-                        self.newFile.send(fileInfo)
+                       
                         
                         // Update current command to show that results are being found
-                        self.currentCommand.send("Found: \(entity)")
-                    }
+                        
+                    
                 }
                 
             case "search_complete", "finished_chat":
