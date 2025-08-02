@@ -242,7 +242,9 @@ struct InfoPage: View {
         .frame(width: 600, height: 700)
         .background(Color(NSColor.windowBackgroundColor))
         .sheet(isPresented: $showingStorePage) {
-            StorePage(agent: agent)
+            StorePage(agent: agent, onDismiss: {
+                showingStorePage = false
+            })
         }
     }
 } 

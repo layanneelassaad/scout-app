@@ -9,8 +9,8 @@ import SwiftUI
 
 struct StorePage: View {
     let agent: Agent
+    let onDismiss: () -> Void
     @EnvironmentObject var storeVM: AgentStoreViewModel
-    @Environment(\.dismiss) var dismiss
     @State private var showingPermissionsWarning = false
     
     var body: some View {
@@ -18,7 +18,7 @@ struct StorePage: View {
             // Header with back button
             HStack {
                 Button(action: {
-                    dismiss()
+                    onDismiss()
                 }) {
                     HStack(spacing: 8) {
                         Image(systemName: "chevron.left")

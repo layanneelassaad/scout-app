@@ -67,7 +67,7 @@ struct AnimatedDownloadIndicator: View {
 }
 
 struct AgentStoreView: View {
-    @EnvironmentObject var storeVM: AgentStoreViewModel
+    @StateObject private var storeVM = AgentStoreViewModel()
     @Environment(\.openWindow) var openWindow
 
     @State private var selectedView = 0
@@ -75,8 +75,14 @@ struct AgentStoreView: View {
     @State private var showingAgentInfo: Agent? = nil
     @State private var showingSettings: Agent? = nil
     @State private var showingStorePage: Agent? = nil
+    @State private var navigationState: NavigationState = .main
 
     private let categories = Category.allCategories
+    
+    enum NavigationState {
+        case main
+        case storePage(Agent)
+    }
     
     private func agentsForSection(_ sectionIndex: Int) -> [Agent] {
         let category = categories[sectionIndex]
@@ -96,6 +102,48 @@ struct AgentStoreView: View {
     }
 
     var body: some View {
+        Group {
+            switch navigationState {
+            case .main:
+                mainView
+            case .storePage(let agent):
+                StorePage(agent: agent) {
+                    navigationState = .main
+                }
+            }
+        }
+        .environmentObject(storeVM)
+        .sheet(item: $showingAgentInfo) { agent in
+            InfoPage(agent: agent)
+        }
+        .sheet(item: $showingSettings) { agent in
+            SettingsPage(agent: agent)
+        }
+        .sheet(isPresented: $storeVM.showingCheckout) {
+            if let url = storeVM.checkoutURL {
+                ZStack(alignment: .topTrailing) {
+                    CheckoutWebView(url: url)
+                        .frame(minWidth: 600, minHeight: 800)
+                    
+                    Button(action: {
+                        storeVM.showingCheckout = false
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 20, weight: .regular))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(12)
+                    .help("Close checkout")
+                }
+            } else {
+                Text("Unable to load checkout.")
+                    .padding()
+            }
+        }
+    }
+    
+    private var mainView: some View {
         HStack(spacing: 0) {
             // Sidebar with tabs
             VStack(spacing: 0) {
@@ -170,54 +218,24 @@ struct AgentStoreView: View {
                             }
                         }
                     } else {
-                        AgentGridView(
-                            agents: agentsForSection(selectedView).filter {
+                        LazyVStack(spacing: 0) {
+                            ForEach(agentsForSection(selectedView).filter {
                                 searchText.isEmpty ||
                                 $0.name.localizedCaseInsensitiveContains(searchText)
-                            },
-                            onTap: { agent in
-                                showingStorePage = agent
+                            }) { agent in
+                                StoreItemView(agent: agent, onTap: {
+                                    navigationState = .storePage(agent)
+                                })
+                                Divider()
+                                    .background(Color.gray.opacity(0.3))
                             }
-                        )
+                        }
                     }
                 }
             }
             .background(Color(NSColor.windowBackgroundColor))
         }
         .background(Color(NSColor.windowBackgroundColor))
-        .sheet(isPresented: $storeVM.showingCheckout) {
-            if let url = storeVM.checkoutURL {
-                ZStack(alignment: .topTrailing) {
-                  
-                    CheckoutWebView(url: url)
-                        .frame(minWidth: 600, minHeight: 800)
-
-                 
-                    Button(action: {
-                        storeVM.showingCheckout = false
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 20, weight: .regular))
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(12)
-                    .help("Close checkout")
-                }
-            } else {
-                Text("Unable to load checkout.")
-                    .padding()
-            }
-        }
-        .sheet(item: $showingAgentInfo) { agent in
-            InfoPage(agent: agent)
-        }
-        .sheet(item: $showingSettings) { agent in
-            SettingsPage(agent: agent)
-        }
-        .sheet(item: $showingStorePage) { agent in
-            StorePage(agent: agent)
-        }
     }
 }
 
