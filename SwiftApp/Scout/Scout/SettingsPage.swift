@@ -179,7 +179,7 @@ struct PermissionsView: View {
                                     Text(permission)
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundColor(.primary)
-                                    Text("Recommended for enhanced functionality")
+                                    Text(permission == "Knowledge Graph" ? "Recommended for semantic search" : "Recommended for full functionality")
                                         .font(.system(size: 12, weight: .regular))
                                         .foregroundColor(.secondary)
                                 }
