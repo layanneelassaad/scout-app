@@ -50,6 +50,7 @@ struct InfoPage: View {
                         .foregroundColor(.secondary)
                 }
                 .buttonStyle(PlainButtonStyle())
+                .focusable(false)
                 
                 Spacer()
                 

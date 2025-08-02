@@ -81,36 +81,36 @@ struct StorePage: View {
                             
                             // Price or Purchase Status
                             HStack(spacing: 8) {
-                                if storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
-                                    HStack(spacing: 6) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .font(.system(size: 16, weight: .medium))
-                                            .foregroundColor(.green)
-                                        Text("Purchased")
-                                            .font(.system(size: 16, weight: .medium))
-                                            .foregroundColor(.green)
-                                    }
-                                } else {
-                                    if agent.isFree {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "arrow.down.circle.fill")
-                                                .font(.system(size: 16, weight: .medium))
-                                                .foregroundColor(.blue)
-                                            Text("Free")
-                                                .font(.system(size: 16, weight: .medium))
-                                                .foregroundColor(.blue)
-                                        }
-                                    } else {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "cart.fill")
-                                                .font(.system(size: 16, weight: .medium))
-                                                .foregroundColor(.blue)
-                                            Text(String(format: "$%.2f", agent.price))
-                                                .font(.system(size: 16, weight: .medium))
-                                                .foregroundColor(.blue)
-                                        }
-                                    }
-                                }
+                                // if storeVM.purchasedAgentIDs.contains(agent.id.uuidString) {
+                                //     HStack(spacing: 6) {
+                                //         Image(systemName: "checkmark.circle.fill")
+                                //             .font(.system(size: 16, weight: .medium))
+                                //             .foregroundColor(.green)
+                                //         Text("Purchased")
+                                //             .font(.system(size: 16, weight: .medium))
+                                //             .foregroundColor(.green)
+                                //     }
+                                // } else {
+                                //     if agent.isFree {
+                                //         HStack(spacing: 6) {
+                                //             Image(systemName: "arrow.down.circle.fill")
+                                //                 .font(.system(size: 16, weight: .medium))
+                                //                 .foregroundColor(.blue)
+                                //             Text("Free")
+                                //                 .font(.system(size: 16, weight: .medium))
+                                //                 .foregroundColor(.blue)
+                                //         }
+                                //     } else {
+                                //         HStack(spacing: 6) {
+                                //             Image(systemName: "cart.fill")
+                                //                 .font(.system(size: 16, weight: .medium))
+                                //                 .foregroundColor(.blue)
+                                //             Text(String(format: "$%.2f", agent.price))
+                                //                 .font(.system(size: 16, weight: .medium))
+                                //                 .foregroundColor(.blue)
+                                //         }
+                                //     }
+                                // }
                                 
                                 // Rating
                                 HStack(spacing: 4) {
@@ -314,27 +314,19 @@ struct StorePage: View {
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.primary)
                         
-                        // Mock reviews
                         VStack(spacing: 12) {
                             ReviewCard(
-                                author: "Sarah M.",
+                                author: "Alec A.",
                                 rating: 5,
                                 date: "2 days ago",
-                                comment: "This agent is incredible! Found my lost document in seconds."
+                                comment: "This agent is incredible! I can't tell you how many times I've needed something like this and now I have it."
                             )
                             
                             ReviewCard(
-                                author: "Mike R.",
-                                rating: 4,
-                                date: "1 week ago",
-                                comment: "Really useful for finding old emails and files. Works exactly as advertised."
-                            )
-                            
-                            ReviewCard(
-                                author: "Alex K.",
+                                author: "Layanne E.",
                                 rating: 5,
-                                date: "2 weeks ago",
-                                comment: "Game changer for file organization. Natural language search is amazing."
+                                date: "1 day ago",
+                                comment: "Simply Amazing!"
                             )
                         }
                     }

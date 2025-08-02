@@ -662,6 +662,7 @@ struct PermissionsWarningView: View {
                     dismiss()
                 }
                 .buttonStyle(.bordered)
+                .focusable(false)
                 
                 Button(agent.isFree ? "Install" : "Buy Agent") {
                     if agent.isFree {
