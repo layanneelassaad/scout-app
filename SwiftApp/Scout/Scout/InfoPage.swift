@@ -46,16 +46,10 @@ struct InfoPage: View {
                     dismiss()
                 }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.system(size: 20, weight: .medium))
                         .foregroundColor(.secondary)
                 }
                 .buttonStyle(PlainButtonStyle())
-                
-                Spacer()
-                
-                Text(agent.name)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.primary)
                 
                 Spacer()
                 
@@ -66,7 +60,7 @@ struct InfoPage: View {
                     HStack(spacing: 6) {
                         Image(systemName: "cart.fill")
                             .font(.system(size: 14, weight: .medium))
-                        Text("Store")
+                        Text("View in Store")
                             .font(.system(size: 14, weight: .medium))
                     }
                     .foregroundColor(.blue)
