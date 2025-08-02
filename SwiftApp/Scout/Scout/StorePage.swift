@@ -318,14 +318,14 @@ struct StorePage: View {
                             ReviewCard(
                                 author: "Alec A.",
                                 rating: 5,
-                                date: "2 days ago",
-                                comment: "This agent is incredible! I can't tell you how many times I've needed something like this and now I have it."
+                                date: "1 day ago",
+                                comment: "This agent is incredible!"
                             )
                             
                             ReviewCard(
                                 author: "Layanne E.",
                                 rating: 5,
-                                date: "1 day ago",
+                                date: "2 days ago",
                                 comment: "Simply Amazing!"
                             )
                         }

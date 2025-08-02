@@ -73,6 +73,7 @@ struct InfoPage: View {
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
+                .focusable(false)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)

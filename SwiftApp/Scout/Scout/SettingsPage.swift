@@ -66,7 +66,7 @@ struct SettingsPage: View {
                 .background(Color.gray.opacity(0.3))
             
             // Tab Picker
-            Picker("Settings", selection: $selectedTab) {
+            Picker("", selection: $selectedTab) {
                 Text("Permissions").tag(0)
                 Text("Other Settings").tag(1)
             }
@@ -96,24 +96,34 @@ struct PermissionsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Required Permissions
+            // Recommended Permissions
             VStack(alignment: .leading, spacing: 12) {
-                Text("Required Permissions")
+                Text("Recommended Permissions")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
                 
-                if let permissionsPage = agent.permissionsPage {
-                    ForEach(permissionsPage.requiredPermissions, id: \.name) { permission in
+                if agent.recommendedPermissions.isEmpty {
+                    Text("No permissions recommended")
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                        )
+                } else {
+                    ForEach(agent.recommendedPermissions, id: \.self) { permission in
                         HStack(spacing: 12) {
-                            Image(systemName: permission.icon)
-                                .foregroundColor(.red)
+                            Image(systemName: "info.circle.fill")
+                                .foregroundColor(.orange)
                                 .font(.system(size: 14, weight: .medium))
                             
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(permission.name)
+                                Text(permission)
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text(permission.description)
+                                Text("Recommended for enhanced functionality")
                                     .font(.system(size: 12, weight: .regular))
                                     .foregroundColor(.secondary)
                             }
@@ -123,7 +133,7 @@ struct PermissionsView: View {
                             Button("Grant") {
                                 // TODO: Handle permission granting
                             }
-                            .buttonStyle(.borderedProminent)
+                            .buttonStyle(.bordered)
                             .controlSize(.small)
                         }
                         .padding(.horizontal, 16)
@@ -136,24 +146,35 @@ struct PermissionsView: View {
                 }
             }
             
-            // Recommended Permissions
+            // Required Permissions
             VStack(alignment: .leading, spacing: 12) {
-                Text("Recommended Permissions")
+                Text("Required Permissions")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)
                 
-                if let permissionsPage = agent.permissionsPage {
-                    ForEach(permissionsPage.recommendedPermissions, id: \.name) { permission in
+                let validRequiredPermissions = agent.requiredPermissions.filter { !$0.isEmpty }
+                if validRequiredPermissions.isEmpty {
+                    Text("No permissions required")
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                        )
+                } else {
+                    ForEach(validRequiredPermissions, id: \.self) { permission in
                         HStack(spacing: 12) {
-                            Image(systemName: permission.icon)
-                                .foregroundColor(.orange)
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
                                 .font(.system(size: 14, weight: .medium))
                             
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(permission.name)
+                                Text(permission)
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundColor(.primary)
-                                Text(permission.description)
+                                Text("Required for \(agent.name) to function properly")
                                     .font(.system(size: 12, weight: .regular))
                                     .foregroundColor(.secondary)
                             }
@@ -163,7 +184,7 @@ struct PermissionsView: View {
                             Button("Grant") {
                                 // TODO: Handle permission granting
                             }
-                            .buttonStyle(.bordered)
+                            .buttonStyle(.borderedProminent)
                             .controlSize(.small)
                         }
                         .padding(.horizontal, 16)
