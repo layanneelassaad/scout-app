@@ -102,48 +102,6 @@ struct AgentStoreView: View {
     }
 
     var body: some View {
-        Group {
-            switch navigationState {
-            case .main:
-                mainView
-            case .storePage(let agent):
-                StorePage(agent: agent) {
-                    navigationState = .main
-                }
-            }
-        }
-        .environmentObject(storeVM)
-        .sheet(item: $showingAgentInfo) { agent in
-            InfoPage(agent: agent)
-        }
-        .sheet(item: $showingSettings) { agent in
-            SettingsPage(agent: agent)
-        }
-        .sheet(isPresented: $storeVM.showingCheckout) {
-            if let url = storeVM.checkoutURL {
-                ZStack(alignment: .topTrailing) {
-                    CheckoutWebView(url: url)
-                        .frame(minWidth: 600, minHeight: 800)
-                    
-                    Button(action: {
-                        storeVM.showingCheckout = false
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 20, weight: .regular))
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(12)
-                    .help("Close checkout")
-                }
-            } else {
-                Text("Unable to load checkout.")
-                    .padding()
-            }
-        }
-    }
-    
-    private var mainView: some View {
         HStack(spacing: 0) {
             // Sidebar with tabs
             VStack(spacing: 0) {
@@ -185,55 +143,97 @@ struct AgentStoreView: View {
                 .background(Color.gray.opacity(0.3))
             
             // Main content area
-            VStack(spacing: 0) {
-                // Content header
-                HStack {
-                    Text(selectedView == 0 ? "Agent Manager" : categories[selectedView].name)
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
+            Group {
+                switch navigationState {
+                case .main:
+                    mainContentView
+                case .storePage(let agent):
+                    StorePage(agent: agent) {
+                        navigationState = .main
+                    }
                 }
-                .padding(.horizontal, 32)
-                .padding(.vertical, 24)
+            }
+        }
+        .background(Color(NSColor.windowBackgroundColor))
+        .environmentObject(storeVM)
+        .sheet(item: $showingAgentInfo) { agent in
+            InfoPage(agent: agent)
+        }
+        .sheet(item: $showingSettings) { agent in
+            SettingsPage(agent: agent)
+        }
+        .sheet(isPresented: $storeVM.showingCheckout) {
+            if let url = storeVM.checkoutURL {
+                ZStack(alignment: .topTrailing) {
+                    CheckoutWebView(url: url)
+                        .frame(minWidth: 600, minHeight: 800)
+                    
+                    Button(action: {
+                        storeVM.showingCheckout = false
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 20, weight: .regular))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(12)
+                    .help("Close checkout")
+                }
+            } else {
+                Text("Unable to load checkout.")
+                    .padding()
+            }
+        }
+    }
+    
+    private var mainContentView: some View {
+        VStack(spacing: 0) {
+            // Content header
+            HStack {
+                Text(selectedView == 0 ? "Agent Manager" : categories[selectedView].name)
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(.primary)
                 
-                Divider()
-                    .background(Color.gray.opacity(0.3))
-                
-                // Content
-                ScrollView {
-                    if selectedView == 0 {
-                        LazyVStack(spacing: 0) {
-                            ForEach(agentsForSection(0).filter {
-                                searchText.isEmpty ||
-                                $0.name.localizedCaseInsensitiveContains(searchText)
-                            }) { agent in
-                                InstalledAgentItemView(agent: agent, openWindow: openWindow) {
-                                    showingAgentInfo = agent
-                                } onSettingsTap: {
-                                    showingSettings = agent
-                                }
-                                Divider()
-                                    .background(Color.gray.opacity(0.3))
+                Spacer()
+            }
+            .padding(.horizontal, 32)
+            .padding(.vertical, 24)
+            
+            Divider()
+                .background(Color.gray.opacity(0.3))
+            
+            // Content
+            ScrollView {
+                if selectedView == 0 {
+                    LazyVStack(spacing: 0) {
+                        ForEach(agentsForSection(0).filter {
+                            searchText.isEmpty ||
+                            $0.name.localizedCaseInsensitiveContains(searchText)
+                        }) { agent in
+                            InstalledAgentItemView(agent: agent, openWindow: openWindow) {
+                                showingAgentInfo = agent
+                            } onSettingsTap: {
+                                showingSettings = agent
                             }
+                            Divider()
+                                .background(Color.gray.opacity(0.3))
                         }
-                    } else {
-                        LazyVStack(spacing: 0) {
-                            ForEach(agentsForSection(selectedView).filter {
-                                searchText.isEmpty ||
-                                $0.name.localizedCaseInsensitiveContains(searchText)
-                            }) { agent in
-                                StoreItemView(agent: agent, onTap: {
-                                    navigationState = .storePage(agent)
-                                })
-                                Divider()
-                                    .background(Color.gray.opacity(0.3))
-                            }
+                    }
+                } else {
+                    LazyVStack(spacing: 0) {
+                        ForEach(agentsForSection(selectedView).filter {
+                            searchText.isEmpty ||
+                            $0.name.localizedCaseInsensitiveContains(searchText)
+                        }) { agent in
+                            StoreItemView(agent: agent, onTap: {
+                                navigationState = .storePage(agent)
+                            })
+                            Divider()
+                                .background(Color.gray.opacity(0.3))
                         }
                     }
                 }
             }
-            .background(Color(NSColor.windowBackgroundColor))
         }
         .background(Color(NSColor.windowBackgroundColor))
     }
