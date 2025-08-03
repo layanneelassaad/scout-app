@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct KnowledgeGraphControlPanel: View {
     @StateObject private var viewModel = KnowledgeGraphViewModel()
@@ -91,6 +92,75 @@ struct KnowledgeGraphControlPanel: View {
                     .padding(.top, 8)
                 }
             }
+            if !viewModel.enabledFileBookmarks.isEmpty {
+              VStack(alignment: .leading, spacing: 12) {
+                Text("Files/Folders Enabled:")
+                  .font(.system(size: 18, weight: .semibold))
+
+                  ForEach(viewModel.enabledFileBookmarks) { bookmark in
+                        ZStack(alignment: .topLeading) {
+                          // ✖️ remove-button
+                          Button {
+                            viewModel.removeBookmark(bookmark)
+                          } label: {
+                            Image(systemName: "xmark.circle.fill")
+                              .font(.system(size: 14))
+                              .foregroundColor(.secondary)
+                          }
+                          .buttonStyle(PlainButtonStyle())
+                          .padding(4)
+
+                          // 📂 the main open-item button
+                          Button {
+                            guard bookmark.url.startAccessingSecurityScopedResource() else { return }
+                            NSWorkspace.shared.open(bookmark.url)
+                          } label: {
+                            HStack {
+                              Image(systemName: bookmark.url.hasDirectoryPath ? "folder.fill" : "doc.fill")
+                              VStack(alignment: .leading) {
+                                Text(bookmark.url.lastPathComponent)
+                                  .fontWeight(.medium)
+                                Text(bookmark.url.path)
+                                  .font(.caption2)
+                                  .foregroundColor(.secondary)
+                                  .lineLimit(1)
+                                  .truncationMode(.middle)
+                              }
+                              Spacer()
+                              Image(systemName: "arrow.up.right.square")
+                            }
+                            .padding(8)
+                            .background(
+                              RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                            )
+                          }
+                          .buttonStyle(PlainButtonStyle())
+                          .padding(.leading, 24) // make room for the “x”
+                        }
+                      }
+                  Button {
+                        viewModel.showingFilePicker = true
+                      } label: {
+                        HStack {
+                          Image(systemName: "plus.circle.fill")
+                          Text("Add More…")
+                        }
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(Color.accentColor.opacity(0.1)))
+                        .overlay(
+                          RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.accentColor, lineWidth: 1)
+                        )
+                      }
+                      .buttonStyle(PlainButtonStyle())
+                      .padding(.top, 4)
+                    }
+              .padding(.horizontal)
+            }
+
+
             
             // Knowledge Graph Settings (only shown when enabled)
             if viewModel.isKnowledgeGraphEnabled && !viewModel.isIndexing {
@@ -402,6 +472,7 @@ struct KnowledgeGraphControlPanel: View {
         .alert("Enable Knowledge Graph", isPresented: $viewModel.showingEnableConfirmation) {
             Button("Cancel", role: .cancel) { }
             Button("Enable") {
+        
                 viewModel.enableKnowledgeGraph()
             }
             Button("Enable for Specific Locations...") {
@@ -424,17 +495,38 @@ struct KnowledgeGraphControlPanel: View {
             VisualizationView()
         }
         .fileImporter(
-            isPresented: $viewModel.showingFilePicker,
-            allowedContentTypes: [.folder],
-            allowsMultipleSelection: true
+          isPresented: $viewModel.showingFilePicker,
+          allowedContentTypes: [UTType.folder, UTType.item],
+          allowsMultipleSelection: true
         ) { result in
-            switch result {
-            case .success(let urls):
-                // Handle selected folders for specific locations
-                viewModel.enableKnowledgeGraph()
-            case .failure(let error):
-                print("File picker error: \(error.localizedDescription)")
+          switch result {
+          case .success(let urls):
+            for url in urls {
+              // 1️⃣ Immediately start access—while the sandbox grant is still valid
+              guard url.startAccessingSecurityScopedResource() else {
+                print("[KGCP] Could not start access for \(url)")
+                continue
+              }
+
+              // 2️⃣ Create & store the security-scoped bookmark right here
+              do {
+                let data = try url.bookmarkData(
+                  options: [.withSecurityScope],
+                  includingResourceValuesForKeys: nil,
+                  relativeTo: nil
+                )
+                viewModel.store(bookmarkData: data, for: url)
+              } catch {
+                print("[KGCP] Bookmark creation error for \(url): \(error)")
+              }
             }
+
+            // 3️⃣ Now that at least one folder/file is bookmarked, enable the KG
+            viewModel.enableKnowledgeGraph()
+
+          case .failure(let error):
+            print("[KGCP] File picker error: \(error)")
+          }
         }
     }
 }
@@ -482,4 +574,4 @@ struct VisualizationView: View {
         .frame(minWidth: 800, minHeight: 600)
         .background(Color(NSColor.windowBackgroundColor))
     }
-} 
+}

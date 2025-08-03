@@ -60,42 +60,107 @@ struct ModernFileRowView: View {
 struct KGFileRowView: View {
     let file: KGFileEntity
 
+    // Helpers
+    private var fileName: String {
+        file.properties?["file_name"]?.stringValue
+            ?? file.entity.replacingOccurrences(of: "File:", with: "")
+    }
+    private var createdDate: String? {
+        file.properties?["created_date"]?.stringValue
+            .flatMap { ISO8601DateFormatter().date(from: $0) }
+            .map { DateFormatter.localizedString(from: $0, dateStyle: .medium, timeStyle: .none) }
+    }
+    private var fileType: String? {
+        file.properties?["file_extension"]?.stringValue
+    }
+    private var fileSize: String? {
+        file.properties?["file_size"]?.stringValue
+    }
+    private var fullPath: String? {
+        file.properties?["full_path"]?.stringValue
+    }
+    private var directoryName: String? {
+        if let path = fullPath {
+            return URL(fileURLWithPath: path).deletingLastPathComponent().lastPathComponent
+        }
+        return nil
+    }
+
     var body: some View {
-        HStack(spacing: 12) {
-            // 1) icon
-            let ext = file.properties?["file_extension"]?.stringValue ?? ""
-            Image(systemName: fileIcon(forExt: ext))
-                .frame(width: 24, height: 24)
+        VStack(alignment: .leading, spacing: 8) {
+            // 1) File name
+            HStack(spacing: 12) {
+                Image(systemName: fileIcon(forExt: fileType ?? ""))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.blue)
 
-            // 2) metadata
+                Text(fileName)
+                    .font(.system(size: 18, weight: .semibold))
+                    .lineLimit(1)
+
+                Spacer()
+            }
+
+            // 2) Found in…
+            if let dir = directoryName {
+                Text("Found in: \(dir)")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+
+            Divider()
+
+            // 3) Metadata rows
             VStack(alignment: .leading, spacing: 4) {
-                Text(file.properties?["file_name"]?.stringValue
-                       ?? file.entity.replacingOccurrences(of: "File:", with: ""))
-                    .font(.system(size: 14, weight: .medium))
-
-                HStack(spacing: 8) {
-                    if let type = file.properties?["file_extension"]?.stringValue {
-                        Text(type).font(.caption)
+                if let date = createdDate {
+                    HStack {
+                        Text("Date created:")
+                            .fontWeight(.medium)
+                        Text(date)
                     }
-                    if let created = file.properties?["created_date"]?.stringValue {
-                        Text(created).font(.caption)
+                    .font(.caption)
+                }
+                if let type = fileType {
+                    HStack {
+                        Text("File type:")
+                            .fontWeight(.medium)
+                        Text(type)
                     }
-                    if let size = file.properties?["file_size"]?.stringValue {
-                        Text(size).font(.caption)
+                    .font(.caption)
+                }
+                if let size = fileSize {
+                    HStack {
+                        Text("File size:")
+                            .fontWeight(.medium)
+                        Text(size)
+                    }
+                    .font(.caption)
+                }
+                if let path = fullPath {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("File path:")
+                            .fontWeight(.medium)
+                        Text(path)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
                     }
                 }
             }
 
-            Spacer()
         }
-        .padding()
+        .padding(12)
         .background(
-          RoundedRectangle(cornerRadius: 10)
-            .fill(Color(NSColor.controlBackgroundColor))
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(NSColor.controlBackgroundColor))
+                .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
         )
+        .padding(.horizontal)
     }
 }
-
 
 // MARK: - Status Panel
 
@@ -319,43 +384,26 @@ struct FileSearchView: View {
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
-            .onChange(of: viewModel.searchMode) { newMode in
-                print("[View] Search mode changed to \(newMode)")
-                switch newMode {
-                case .files:
-                    let q = viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !q.isEmpty else {
-                        print("[View] ⚠️ Empty query—skipping files fetch")
-                        return
-                    }
-                    print("[View] 📂 Fetching KG files for “\(q)”")
-                    viewModel.fetchKGFiles(matching: q)
-                case .content:
-                    print("[View] 🧹 Clearing both content & file‐mode results")
-                    viewModel.files.removeAll()
-                    viewModel.kgFileEntities.removeAll()
-                }
-            }
+            
 
             // Results
             if viewModel.searchMode == .content {
                 ContentFileListView(viewModel: viewModel)
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 8) {
-                        ForEach(viewModel.kgFileEntities) { fe in
-                            KGFileRowView(file: fe)
-                                .onTapGesture {
-                                    if let raw = fe.properties?["full_path"], case let .string(path) = raw {
-                                        print("[View] 🚀 openKGFile at \(path)")
-                                        viewModel.openKGFile(at: path)
-                                    }
-                                }
+                  LazyVStack(spacing: 12) {
+                    ForEach(viewModel.kgFileEntities) { fe in
+                      KGFileRowView(file: fe)
+                        .onTapGesture {
+                          if let raw = fe.properties?["full_path"],
+                             case let .string(path) = raw {
+                            viewModel.openKGFile(at: path)
+                          }
                         }
                     }
-                    .padding()
-                }
-            }
+                  }
+                  .padding(.vertical)
+                }            }
         }
         .background(Color(NSColor.windowBackgroundColor))
         .sheet(isPresented: $showingSettings) {
