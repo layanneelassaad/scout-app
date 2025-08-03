@@ -146,7 +146,7 @@ async def kg_search(query, limit=10, semantic=True, threshold=0.7, context=None)
                         'score': result['score'],
                         'type': entity_data.get('type', 'Unknown'),
                         'description': entity_data.get('description', ''),
-                        'properties': {k: v for k, v in entity_data.items() 
+                        'properties': {k: str(v) for k, v in entity_data.items() 
                                      if k not in ['type', 'description', 'created_at']}
                     }
                     enriched_results.append(enriched_result)
@@ -168,7 +168,7 @@ async def kg_search(query, limit=10, semantic=True, threshold=0.7, context=None)
                     'entity': entity,
                     'type': data.get('type', 'Unknown'),
                     'description': data.get('description', ''),
-                    'properties': {k: v for k, v in data.items() 
+                    'properties': {k: str(v) for k, v in data.items() 
                                  if k not in ['type', 'description', 'created_at']}
                 })
             
@@ -223,7 +223,7 @@ async def kg_query_graph(entity, depth=2, relation_types=None, direction="both",
                 'id': node,
                 'type': data.get('type', 'Unknown'),
                 'description': data.get('description', ''),
-                'properties': {k: v for k, v in data.items() 
+                'properties': {k: str(v) for k, v in data.items() 
                              if k not in ['type', 'description', 'created_at']}
             })
         
@@ -233,7 +233,7 @@ async def kg_query_graph(entity, depth=2, relation_types=None, direction="both",
                 'target': target,
                 'type': data.get('type', 'Unknown'),
                 'weight': data.get('weight', 1.0),
-                'properties': {k: v for k, v in data.items() 
+                'properties': {k: str(v) for k, v in data.items() 
                              if k not in ['type', 'weight', 'created_at']}
             })
         
@@ -792,7 +792,7 @@ async def kg_list_by_type(entity_type, context=None):
                 'entity': entity,
                 'type': data.get('type', 'Unknown'),
                 'description': data.get('description', ''),
-                'properties': {k: v for k, v in data.items() 
+                'properties': {k: str(v) for k, v in data.items() 
                              if k not in ['type', 'description', 'created_at']}
             })
         

@@ -11,7 +11,7 @@ import sys
 import asyncio
 import aiohttp
 import openai
-from entity_analyzer import service_manager
+from kg.entity_analyzer import service_manager
 
 # Load environment variables from .env file
 try:
@@ -111,12 +111,12 @@ def test_with_files(file_paths):
     print("=" * 60)
     
     # Import your existing components
-    from graph_store import KnowledgeGraphStore
-    from file_indexer import FileIndexer
-    from embeddings import EmbeddingManager
+    from kg.graph_store import KnowledgeGraphStore
+    from kg.file_indexer import FileIndexer
+    from kg.embeddings import EmbeddingManager
     
     # Initialize components (same as your simple_index.py)
-    storage_path = os.path.expanduser("~/.mr_kg_data/knowledge_graph.json")
+    storage_path = os.path.expanduser("~/.mr_kg_data")
     graph_store = KnowledgeGraphStore(storage_path=storage_path)
     embedding_manager = EmbeddingManager()
     file_indexer = FileIndexer(graph_store, embedding_manager)

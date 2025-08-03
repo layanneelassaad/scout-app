@@ -247,7 +247,7 @@ class EmbeddingManager:
         return None
     
     def remove_entity(self, entity_name: str) -> bool:
-        """Remove entity from embeddings (note: FAISS doesn't support removal)."""
+        """Remove entity from kg.embeddings (note: FAISS doesn't support removal)."""
         if entity_name in self.entity_embeddings:
             del self.entity_embeddings[entity_name]
             # For FAISS, we'd need to rebuild the index

@@ -14,7 +14,7 @@ def test_graph_store():
     """Test the core graph store functionality."""
     print("=== Testing Graph Store ===")
     
-    from graph_store import KnowledgeGraphStore
+    from kg.graph_store import KnowledgeGraphStore
     
     # Create temporary storage
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
@@ -66,7 +66,7 @@ def test_embeddings():
     """Test the embeddings functionality."""
     print("\n=== Testing Embeddings ===")
     
-    from embeddings import EmbeddingManager
+    from kg.embeddings import EmbeddingManager
     
     # Create temporary cache directory
     cache_dir = tempfile.mkdtemp()
@@ -101,9 +101,9 @@ def test_query_engine():
     """Test the query engine functionality."""
     print("\n=== Testing Query Engine ===")
     
-    from query_engine import KnowledgeGraphQueryEngine
-    from graph_store import KnowledgeGraphStore
-    from embeddings import EmbeddingManager
+    from kg.query_engine import KnowledgeGraphQueryEngine
+    from kg.graph_store import KnowledgeGraphStore
+    from kg.embeddings import EmbeddingManager
     
     # Create temporary storage
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
@@ -151,7 +151,7 @@ def test_file_operations():
     """Test file operations functionality."""
     print("\n=== Testing File Operations ===")
     
-    from file_operations import FileOperations
+    from kg.file_operations import FileOperations
     
     # Create a temporary test file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
@@ -182,8 +182,8 @@ def test_entity_analyzer():
     """Test entity analyzer functionality."""
     print("\n=== Testing Entity Analyzer ===")
     
-    from entity_analyzer import EntityAnalyzer
-    from graph_store import KnowledgeGraphStore
+    from kg.entity_analyzer import EntityAnalyzer
+    from kg.graph_store import KnowledgeGraphStore
     
     # Create temporary storage
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:

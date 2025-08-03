@@ -2,7 +2,7 @@
 """Test script for the line format parser."""
 
 import json
-from line_format_parser import LineFormatParser
+from kg.line_format_parser import LineFormatParser
 
 def test_parser():
     """Test the line format parser with various inputs."""
