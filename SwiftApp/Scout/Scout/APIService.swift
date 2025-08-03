@@ -111,7 +111,10 @@ final class APIService: NSObject, URLSessionDataDelegate {
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         let chunk = String(decoding: data, as: UTF8.self)
+        let accumulated = rawSSEData.value + chunk
+        rawSSEData.send(accumulated)
         print("===== SSE RAW CHUNK =====\n\(chunk)\n========================")
+        
         dataBuffer.append(data)
         processBuffer()
     }

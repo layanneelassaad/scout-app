@@ -223,40 +223,40 @@ struct StatusPanel: View {
 }
 
 // MARK: - Content List View
+
 struct ContentFileListView: View {
     @ObservedObject var viewModel: FileSearchViewModel
 
-    // ① Compute a filtered list that drops all “::chunk_…” paths
+    // Filter out any ::chunk_ entries
     private var visibleFiles: [FileInfo] {
         viewModel.files.filter { !$0.path.contains("::chunk_") }
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 20) {                      // ↑ a bit more breathing room
             HStack {
-                // ② Use filtered count here
-                Text("Files (\(visibleFiles.count))")
-                    .font(.system(size: 16, weight: .semibold))
+                // renamed for content‐mode
+                Text("Results (\(visibleFiles.count))")
+                    .font(.system(size: 18, weight: .semibold))
                 Spacer()
             }
             .padding(.horizontal)
 
             if visibleFiles.isEmpty {
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
                     Image(systemName: "doc.text.magnifyingglass")
                         .font(.system(size: 48, weight: .light))
                         .foregroundColor(.secondary)
-                    Text("No files found")
+                    Text("No results")
                         .font(.headline)
                         .foregroundColor(.secondary)
-                    Text("Try searching for files or content")
+                    Text("Try adjusting your query")
                         .foregroundColor(.secondary.opacity(0.8))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 8) {
-                        // ③ Loop over filtered list
+                    LazyVStack(spacing: 16) {         // ↑ more vertical spacing
                         ForEach(visibleFiles) { file in
                             ModernFileRowView(file: file)
                                 .onTapGesture { viewModel.openFile(file) }
@@ -280,24 +280,40 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 24) {                // ↑ extra spacing
             HStack {
                 Text("Settings")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.system(size: 22, weight: .bold))
                 Spacer()
                 Button("Done") { dismiss() }
-                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.defaultAction)
             }
-            Toggle("Developer View", isOn: $developerViewEnabled)
-                .padding(.top)
-            Text("Show connection status, command status, and raw data stream.")
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
+
+            Divider()
+
+            // purple-tinted developer‐mode toggle
+            Toggle(isOn: $developerViewEnabled) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Developer View")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("Show low-level connection status & raw stream")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .toggleStyle(SwitchToggleStyle(tint: .purple))
+            .padding(.horizontal)
+
             Spacer()
         }
-        .padding(20)
-        .frame(width: 400, height: 200)
-        .background(Color(NSColor.windowBackgroundColor))
+        .padding(24)
+        .frame(minWidth: 400, minHeight: 240)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(NSColor.windowBackgroundColor))
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        )
+        .padding()
     }
 }
 
@@ -310,14 +326,14 @@ struct FileSearchView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header & Search
-            VStack(spacing: 12) {
+            // --- Header & Search Bar ---
+            VStack(spacing: 16) {                           // ↑ extra top/between spacing
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 6) {
                         Text("File Scout")
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
                         Text("Search through your indexed files and content")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.secondary)
                     }
                     Spacer()
@@ -333,7 +349,9 @@ struct FileSearchView: View {
                         .padding(6)
                         .background(RoundedRectangle(cornerRadius: 8).fill(Color(NSColor.controlBackgroundColor)))
                     }
-                    Button { showingSettings = true } label: {
+                    Button {
+                        showingSettings = true
+                    } label: {
                         Image(systemName: "gearshape.fill")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.secondary)
@@ -343,29 +361,30 @@ struct FileSearchView: View {
 
                 HStack(spacing: 12) {
                     HStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass").foregroundColor(.secondary)
-                        TextField("Search for files, content, or topics…", text: $viewModel.searchText)
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.secondary)
+                        TextField("Search files, content, topics…", text: $viewModel.searchText)
                             .textFieldStyle(.plain)
-                            .onSubmit {
-                                print("[View] performSearch called with “\(viewModel.searchText)”")
-                                viewModel.performSearch()
-                            }
+                            .onSubmit { viewModel.performSearch() }
                     }
-                    .padding(12)
+                    .padding(14)
                     .background(RoundedRectangle(cornerRadius: 12).fill(Color(NSColor.controlBackgroundColor)))
+
                     if viewModel.isSearching {
-                        ProgressView().scaleEffect(0.8)
+                        ProgressView()
+                            .scaleEffect(0.8)
                     }
                 }
             }
             .padding()
             .background(Color(NSColor.windowBackgroundColor))
 
-            Divider().background(Color.gray.opacity(0.3))
+            Divider()
+                .background(Color.gray.opacity(0.3))
 
-            // Developer Panels
+            // --- Developer Panels (if enabled) ---
             if developerViewEnabled {
-                VStack(spacing: 16) {
+                VStack(spacing: 20) {
                     StatusPanel(
                         title: "Command Status",
                         isExpanded: $viewModel.isCommandStatusExpanded,
@@ -383,41 +402,43 @@ struct FileSearchView: View {
                 Divider().background(Color.gray.opacity(0.3))
             }
 
-            // Mode Picker
+            // --- Mode Picker ---
             Picker("", selection: $viewModel.searchMode) {
                 Text("Content").tag(SearchMode.content)
                 Text("Files").tag(SearchMode.files)
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
-            
+            .padding(.vertical, 8)           // ↑ extra vertical padding
 
-            // Results
-            if viewModel.searchMode == .content {
-                ContentFileListView(viewModel: viewModel)
-            } else {
-                ScrollView {
-                  LazyVStack(spacing: 12) {
-                    ForEach(viewModel.kgFileEntities) { fe in
-                      KGFileRowView(file: fe)
-                        .onTapGesture {
-                          if let raw = fe.properties?["full_path"],
-                             case let .string(path) = raw {
-                            viewModel.openKGFile(at: path)
-                          }
+            // --- Results Pane ---
+            Group {
+                if viewModel.searchMode == .content {
+                    ContentFileListView(viewModel: viewModel)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 16) {
+                            ForEach(viewModel.kgFileEntities) { fe in
+                                KGFileRowView(file: fe)
+                                    .onTapGesture {
+                                        if let raw = fe.properties?["full_path"],
+                                           case let .string(path) = raw {
+                                            viewModel.openKGFile(at: path)
+                                        }
+                                    }
+                            }
                         }
+                        .padding(.vertical)
                     }
-                  }
-                  .padding(.vertical)
-                }            }
+                }
+            }
+            .animation(.easeInOut, value: viewModel.searchMode)
         }
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color(NSColor.windowBackgroundColor).ignoresSafeArea())
         .sheet(isPresented: $showingSettings) {
             SettingsView(developerViewEnabled: $developerViewEnabled)
         }
-        .onAppear {
-            print("[View] FileSearchView appeared")
-        }
+        .onAppear { print("[View] FileSearchView appeared") }
     }
 }
 
