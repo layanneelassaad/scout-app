@@ -223,20 +223,25 @@ struct StatusPanel: View {
 }
 
 // MARK: - Content List View
-
 struct ContentFileListView: View {
     @ObservedObject var viewModel: FileSearchViewModel
+
+    // ① Compute a filtered list that drops all “::chunk_…” paths
+    private var visibleFiles: [FileInfo] {
+        viewModel.files.filter { !$0.path.contains("::chunk_") }
+    }
 
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("Files (\(viewModel.files.count))")
+                // ② Use filtered count here
+                Text("Files (\(visibleFiles.count))")
                     .font(.system(size: 16, weight: .semibold))
                 Spacer()
             }
             .padding(.horizontal)
 
-            if viewModel.files.isEmpty {
+            if visibleFiles.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "doc.text.magnifyingglass")
                         .font(.system(size: 48, weight: .light))
@@ -251,7 +256,8 @@ struct ContentFileListView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 8) {
-                        ForEach(viewModel.files) { file in
+                        // ③ Loop over filtered list
+                        ForEach(visibleFiles) { file in
                             ModernFileRowView(file: file)
                                 .onTapGesture { viewModel.openFile(file) }
                                 .contextMenu {

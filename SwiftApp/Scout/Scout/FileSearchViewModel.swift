@@ -90,21 +90,22 @@ final class FileSearchViewModel: ObservableObject {
         
         // New chunk/file from SSE
         apiService.newFile
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] chunk in
-                guard let self = self else { return }
-                switch self.searchMode {
-                case .content:
-                    print("[VM] 📥 newFile chunk in content mode: \(chunk.path)")
-                    self.files.append(chunk)
-                case .files:
-                    if let fileName = chunk.properties?["file_name"] {
-                        
-                        self.matchingSourceFiles.insert(fileName)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] chunk in
+                    guard let self = self else { return }
+
+                    // 1️⃣ Always capture file_name for the KG lookup, regardless of current tab:
+                    if let name = chunk.properties?["file_name"] {
+                        self.matchingSourceFiles.insert(name)
+                    }
+
+                    // 2️⃣ Only append to the content‐mode list when in .content
+                    if self.searchMode == .content {
+                        print("[VM] 📥 newFile chunk in content mode: \(chunk.path)")
+                        self.files.append(chunk)
                     }
                 }
-            }
-            .store(in: &cancellables)
+                .store(in: &cancellables)
         
         // On search completion
         apiService.searchDidComplete
