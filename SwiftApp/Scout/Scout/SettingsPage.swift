@@ -101,7 +101,14 @@ struct PermissionsView: View {
         VStack(alignment: .leading, spacing: 20) {
             // Required Permissions
             let validRequiredPermissions = agent.requiredPermissions.filter { !$0.isEmpty }
-            let ungrantedRequiredPermissions = validRequiredPermissions.filter { !grantedPermissions.contains($0) }
+            let ungrantedRequiredPermissions = validRequiredPermissions.filter { permission in
+                // Check if the permission is granted, accounting for name changes
+                if permission == "Limited Disk Access (Select Specific Folders)" {
+                    return !grantedPermissions.contains("Limited Disk Access")
+                } else {
+                    return !grantedPermissions.contains(permission)
+                }
+            }
             
             if !ungrantedRequiredPermissions.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
@@ -249,8 +256,8 @@ struct PermissionsView: View {
                             Spacer()
                             
                             HStack(spacing: 8) {
-                                if permission == "Limited Disk Access (Select Specific Folders)" {
-                                    Button("Details") {
+                                if permission == "Limited Disk Access" {
+                                    Button("Manage") {
                                         // TODO: Show details of selected folders
                                     }
                                     .buttonStyle(.bordered)

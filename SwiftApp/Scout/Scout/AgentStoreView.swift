@@ -488,6 +488,13 @@ struct StoreItemView: View {
     let onTap: () -> Void
     @State private var isHovered = false
     @State private var showingPermissionsWarning = false
+    
+    // Check if this agent should be grayed out
+    private var isGrayedOut: Bool {
+        return agent.name == "Report Generator" || 
+               agent.name == "Email Responder" || 
+               agent.name == "Meeting Note-Taker"
+    }
 
     var body: some View {
         HStack(spacing: 16) {
@@ -496,7 +503,9 @@ struct StoreItemView: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
-                            colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
+                            colors: isGrayedOut ? 
+                                [Color.gray.opacity(0.3), Color.gray.opacity(0.3)] :
+                                [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -505,25 +514,19 @@ struct StoreItemView: View {
                 
                 Image(systemName: agent.icon)
                     .font(.system(size: 24, weight: .medium))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.blue, .purple],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .foregroundColor(isGrayedOut ? .gray : .blue)
             }
             
             // Content
             VStack(alignment: .leading, spacing: 4) {
                 Text(agent.name)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(isGrayedOut ? .secondary : .primary)
                     .lineLimit(1)
                 
                 Text(agent.description)
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(isGrayedOut ? .secondary : .secondary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 
@@ -532,10 +535,10 @@ struct StoreItemView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill")
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.yellow)
+                            .foregroundColor(isGrayedOut ? .gray : .yellow)
                         Text(String(format: "%.1f", agent.rating))
                             .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.primary)
+                            .foregroundColor(isGrayedOut ? .secondary : .primary)
                         Text("(\(agent.reviewCount))")
                             .font(.system(size: 11, weight: .regular))
                             .foregroundColor(.secondary)
@@ -564,7 +567,9 @@ struct StoreItemView: View {
                 }
             } else {
                 Button(action: { 
-                    showingPermissionsWarning = true
+                    if !isGrayedOut {
+                        showingPermissionsWarning = true
+                    }
                 }) {
                     HStack(spacing: 6) {
                         if agent.isFree {
@@ -579,17 +584,17 @@ struct StoreItemView: View {
                                 .font(.system(size: 14, weight: .medium))
                         }
                     }
-                    .foregroundColor(.white)
+                    .foregroundColor(isGrayedOut ? .gray : .white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .frame(width: 100)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.blue)
+                            .fill(isGrayedOut ? Color.gray.opacity(0.3) : Color.blue)
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
-                .disabled(storeVM.isProcessing)
+                .disabled(storeVM.isProcessing || isGrayedOut)
             }
         }
         .padding(.horizontal, 20)
