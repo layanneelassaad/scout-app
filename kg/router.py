@@ -48,11 +48,21 @@ async def stream_events(session_id: str, api_key: str):
         if search_results:
             for result in search_results[:5]:  # Limit to 5 results
                 await asyncio.sleep(0.5)
-                yield f"event: command_result\ndata: {{\"result\": {{\"entity\": \"{result.get('entity', 'Unknown')}\", \"score\": {result.get('score', 0.0)}, \"type\": \"{result.get('type', 'Unknown')}\", \"description\": \"{result.get('description', '')}\"}} }}\n\n"
+                payload = { "result": result }
+                text = json.dumps(payload)
+                print(f"[router] ▶️ SSE payload: {text}")
+                yield f"event: command_result\ndata: {text}\n\n"
+                
         else:
             # Fallback to demo result if no search results
             await asyncio.sleep(0.5)
-            yield f"event: command_result\ndata: {{\"result\": {{\"entity\": \"/Users/demo/example.pdf\", \"score\": 0.8, \"type\": \"document\", \"description\": \"Demo document\"}} }}\n\n"
+            fallback = {"result": {"entity": "/Users/demo/example.pdf",
+                                   "score": 0.8,
+                                   "type": "document",
+                                   "description": "Demo document"}}
+            text = json.dumps(fallback)
+            print(f"[router] ▶️ SSE fallback payload: {text}")
+            yield f"event: command_result\ndata: {text}\n\n"
         
         await asyncio.sleep(1)
         yield f"event: finished_chat\ndata: {{}}\n\n"
@@ -158,6 +168,15 @@ async def filesearch_page(request:Request):
 
 debug_box("Loaded Knowledge Graph API routes successfully.")
 
+@protected_router.get("/api/kg/entities-by-type/{entity_type}")
+async def list_entities_by_type(entity_type: str):
+    """
+    One-off endpoint to return all entities of a given type
+    """
+    from .graph_commands import kg_list_by_type
+    # call the existing command handler directly
+    result = await kg_list_by_type(entity_type=entity_type)
+    return JSONResponse(result)
 
 
 @protected_router.get('/api/kg/watched-dirs')
@@ -185,6 +204,8 @@ async def get_watched_dirs():
             'success': False,
             'error': str(e)
         }, status_code=500)
+
+        
 
 @protected_router.post('/api/kg/add-watched-dir')
 async def add_watched_dir(request: AddWatchedDirRequest):
