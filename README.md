@@ -1,12 +1,25 @@
 # Scout App
+> **Scout** is a local, privacy-first platform to **install, run, and manage AI agents** on your Mac. It ships with a curated set of useful starter agents, an **Agent Store** for discovery, a centralized **Agent Manager** for permissions, and an **optional Knowledge Graph** that helps agents reason over the files you explicitly allow.
 
-product description
+
+## Product description
+
+- **Agent Store.** Browse agents like an App Store: each agent has a page with a description, reviews, and the **exact permissions** it requests (e.g., file access to selected folders, network, calendar).  
+- **Agent Manager.** A single pane to **view installed agents**, enable/disable them, and **grant/revoke permissions** at any time. Every capability is **opt-in** and explicit.  
+- **Permissioned Search Agent (example).** Before use, you grant the Search Agent read access to specific folders only. It will **not** see anything else.  
+- **Knowledge Graph (optional).** If enabled, Scout builds a local, fast index/graph over the user-selected files. Agents can use the graph to improve retrieval and reasoning. You choose the scope (e.g., a single folder for quick indexing).  
+- **Local-first & secure.** Agents run locally; nothing is indexed or shared unless you opt in. Integrations with external services are permission-gated and transparent.
 
 ## Prerequisites
 
-- **macOS** (required for Swift development) **arm?
-- **Xcode** (for building the Swift app)
-- **Python 3.9+** (for the backend)
+- **macOS 13+**  
+  - **Apple Silicon (arm64)** recommended. (The default build targets `arm64`; for Intel, see notes below.)
+- **Xcode 15+** (includes Command Line Tools)
+- **Python 3.9+** (for embedded/backend services)
+- **Node 18+** (only for optional Stripe test server)
+- **Stripe CLI** (optional; for payments demo)
+- > **Intel build:** set `ARCH=x86_64` when invoking the build script, or adjust your Xcode scheme to produce an x86_64 binary. For a universal build, compile both and lipo them (advanced).
+
 
 ## Building the Application
 
