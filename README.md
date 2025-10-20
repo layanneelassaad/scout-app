@@ -5,10 +5,10 @@
 ## Product description
 
 - **Agent Store.** Browse agents like an App Store: each agent has a page with a description, reviews, and the **exact permissions** it requests (e.g., file access to selected folders, network, calendar).  
-- **Agent Manager.** A single pane to **view installed agents**, enable/disable them, and **grant/revoke permissions** at any time. Every capability is **opt-in** and explicit.  
-- **Permissioned Search Agent (example).** Before use, you grant the Search Agent read access to specific folders only. It will **not** see anything else.  
-- **Knowledge Graph (optional).** If enabled, Scout builds a local, fast index/graph over the user-selected files. Agents can use the graph to improve retrieval and reasoning. You choose the scope (e.g., a single folder for quick indexing).  
-- **Local-first & secure.** Agents run locally; nothing is indexed or shared unless you opt in. Integrations with external services are permission-gated and transparent.
+- **Agent Manager.** A single pane to view installed agents, enable/disable them, and grant/revoke permissions at any time. Every capability is **opt-in** and explicit.  
+- **Permissioned Search Agent.** Before use, you grant the Search Agent read access to specific folders only. It will **not** see anything else.  
+- **Knowledge Graph.** If enabled, Scout builds a local, fast index/graph over the user-selected files. Agents can use the graph to improve retrieval and reasoning. You choose the scope (e.g., a single folder for quick indexing).  
+- **Local and secure.** Agents run locally; nothing is indexed or shared unless you opt in. Integrations with external services are permission-gated and transparent.
 
 ## Prerequisites
 
