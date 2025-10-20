@@ -1,5 +1,5 @@
 # Scout App
-> **Scout** is a local, privacy-first platform to **install, run, and manage AI agents** on your Mac. It ships with a curated set of useful starter agents, an **Agent Store** for discovery, a centralized **Agent Manager** for permissions, and an **optional Knowledge Graph** that helps agents reason over the files you explicitly allow.
+> **Scout** is a local, privacy-first platform to **install, run, and manage AI agents** on your Mac. It ships with a curated set of useful starter agents, an **Agent Store** for discovery, a centralized **Agent Manager** for permissions, and a **Knowledge Graph** that helps agents reason over the files you explicitly allow.
 
 
 ## Product description
